@@ -7,6 +7,7 @@
     "build": "tsc && tsc-alias",
     "lint": "eslint .",
     "format": "prettier --write .",
+    "prepare": "ts-patch install",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
@@ -15,14 +16,17 @@
     "@octokit/graphql": "^8.2.1",
     "@samchon/openapi": "^3.1.0",
     "@scure/bip32": "^1.6.2",
+    "dedent": "^1.5.3",
     "dotenv": "^16.4.7",
     "drizzle-kit": "^0.30.5",
     "drizzle-orm": "^0.40.1",
+    "graphql-request": "^7.1.2",
     "hono": "^4.7.5",
     "lodash-es": "^4.17.21",
     "openai": "^4.89.0",
     "pinata-web3": "^0.5.4",
     "postgres": "^3.4.5",
+    "ts-patch": "^3.3.0",
     "tsc-alias": "^1.8.11",
     "typia": "^8.0.3",
     "viem": "^2.23.13"
