@@ -7,12 +7,12 @@ export default function Home() {
     <div>
       <AppBar />
       <div className="mt-12">
-        <div className="flex flex-col items-center">
-          <div className="max-w-7xl grid grid-cols-12  mt-12 h-full gap-8">
-            <div className="col-span-12 lg:col-span-6 lg:pt-12 flex flex-col items-center gap-6">
+        <div className="flex flex-col items-center justify-center">
+          <div className="max-w-6xl grid grid-cols-12  mt-20 h-full gap-8">
+            <div className="col-span-12 lg:col-span-7 lg:mt-16 flex flex-col items-center gap-2">
               <div className="mb-7">
                 <Image
-                  src="/logo.png"
+                  src="/liaison-agent.png"
                   alt="Liaison Agents"
                   className="rounded-xl"
                   width={800}
@@ -29,8 +29,8 @@ export default function Home() {
                 />
               </div>
             </div>
-            <div className="col-span-12 lg:col-span-5">
-              <div className="ml-16">
+            <div className="col-span-12 lg:col-span-5 ">
+              <div className="flex items-center justify-center p-4">
                 <LiaisonForm />
               </div>
             </div>

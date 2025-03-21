@@ -7,12 +7,19 @@ import Image from "next/image";
 
 export default function AppBar() {
   return (
-    <div className="fixed top-0 left-0 right-0 z-20 p-1.5   bg-white border-b border-gray-400">
-      <Menubar className="rounded-none border-none px-2 lg:px-4">
+    <div className="fixed top-0 left-0 right-0 z-20 p-1.5 bg-white border-b border-gray-400">
+      <Menubar className="rounded-none shadow-none border-none px-2 lg:px-4">
         <MenubarMenu>
           <div className=" lg:hidden"></div>
           <MenubarTrigger>
-            <Link href="/">Liaison Agents</Link>
+            <Link href="/">
+              <Image
+                src="/liaison-agent.png"
+                alt="Liaison Agents"
+                width={140}
+                height={140}
+              />
+            </Link>
           </MenubarTrigger>
         </MenubarMenu>
         <div className="grow" />

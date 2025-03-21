@@ -132,7 +132,7 @@ export default function LiaisonForm() {
     <>
       {!result ? (
         // Show Form
-        <div className="p-8 max-w-lg  border border-gray-400 rounded-lg">
+        <div className="p-8 w-md  border border-gray-400 rounded-lg shadow-lg transition-transform hover:scale-105 hover:shadow-xl">
           <div className="mb-4">
             <div className="bg-linear-to-r from-cyan-200 to-blue-200 w-80 h-8 -mb-8 rounded-lg"></div>
             <h2 className="text-2xl font-bold">{"Bring your Agent Onchain"}</h2>
@@ -169,7 +169,7 @@ export default function LiaisonForm() {
         </div>
       ) : (
         // Show Liaison Details
-        <div className="p-8 max-w-lg  border border-gray-400 rounded-lg">
+        <div className="p-8 w-md border border-gray-400 rounded-lg shadow-lg">
           <div className="mb-4">
             <div className="bg-linear-to-r from-lime-200 to-teal-200 w-80 h-8 -mb-8 rounded-lg"></div>
             <h2 className="text-2xl font-bold">
@@ -182,9 +182,9 @@ export default function LiaisonForm() {
           <p className="text-sm font-semibold">{"Liaison Key"}</p>
           <div className="flex justify-between items-center bg-gray-100 px-4 p-1 rounded">
             <p className="text-sm">
-              {result.liaisonKey.slice(0, 16) +
+              {result.liaisonKey.slice(0, 14) +
                 "...." +
-                result.liaisonKey.slice(-16)}
+                result.liaisonKey.slice(-14)}
             </p>
             <Button
               variant="ghost"
@@ -204,24 +204,32 @@ export default function LiaisonForm() {
           </p>
 
           {/* Liaison Tool Schema */}
-          <div className="mt-1">
+
+          <div className="mt-1 relative">
             <p className="text-sm font-semibold">{"Liaison Tool Schema:"}</p>
             <pre className="bg-slate-900 text-sm text-white p-2 rounded overflow-auto max-h-40">
               {JSON.stringify(toolSchema, null, 2)}
             </pre>
             <Button
               variant="outline"
-              className="mt-1"
+              size="sm"
+              className="absolute bottom-2 right-2"
               onClick={() =>
                 handleCopy(JSON.stringify(toolSchema, null, 2), "schema")
               }
             >
               {copiedField === "schema" ? (
-                <Check className="text-green-500" />
+                <>
+                  {" "}
+                  <Check className="h-3 w-3 text-green-500" />
+                  <p>schema copied</p>
+                </>
               ) : (
-                <Copy className="mr-2" />
-              )}{" "}
-              {"Copy Schema"}
+                <>
+                  <Copy className="h-3 w-3" />
+                  <p>copy schema</p>
+                </>
+              )}
             </Button>
           </div>
 
@@ -229,7 +237,7 @@ export default function LiaisonForm() {
           <div className="-p-1 mt-1  bg-sky-200 rounded-lg">
             <p className="text-xs  text-gray-700">
               {
-                "Copy the liaison secret and this schema and insert it into your agent's tools/actions. This allows your agent to interact with the liaison via the specified API. Learn more"
+                "Copy the liaison secret and this schema and insert it into your agent's tools/actions. This allows your agent to interact with the liaison agent. Learn more"
               }
             </p>
           </div>
