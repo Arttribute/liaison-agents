@@ -224,6 +224,8 @@ export async function runAgent(c: Context) {
 
     if (toolCalls?.length) {
       console.log("Tool Calls", toolCalls);
+
+      completionBody.messages.push(chatGPTResponse.choices[0].message);
       await Promise.all(
         toolCalls.map(async (toolCall) => {
           if (toolCall.type === "function") {
@@ -251,13 +253,6 @@ export async function runAgent(c: Context) {
             });
 
             const toolCallResponse = await response.json();
-
-            completionBody.messages.push({
-              // append result message
-              role: "tool",
-              tool_call_id: toolCall.id,
-              content: JSON.stringify(toolCallResponse),
-            });
 
             return toolCallResponse;
           }
