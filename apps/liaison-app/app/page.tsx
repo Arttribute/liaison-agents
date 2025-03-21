@@ -1,15 +1,16 @@
 import AppBar from "@/components/layout/app-bar";
 import Image from "next/image";
+import LiaisonForm from "@/components/agents/liaison-form";
 
 export default function Home() {
   return (
     <div>
       <AppBar />
       <div className="mt-12">
-        <div className="relative flex h-[300px] flex-col items-center rounded-lg bg-background">
-          <div className="max-w-6xl grid grid-cols-12 mt-12 h-full items-center z-10 gap-8">
-            <div className="col-span-12 lg:col-span-6">
-              <div className="mb-6">
+        <div className="flex flex-col items-center">
+          <div className="max-w-7xl grid grid-cols-12  mt-12 h-full gap-8">
+            <div className="col-span-12 lg:col-span-6 lg:pt-12 flex flex-col items-center gap-6">
+              <div className="mb-7">
                 <Image
                   src="/logo.png"
                   alt="Liaison Agents"
@@ -28,8 +29,10 @@ export default function Home() {
                 />
               </div>
             </div>
-            <div className="col-span-12 lg:col-span-6">
-              <div className="border border-gray-400 rounded-xl p-4 h-96 w-96"></div>
+            <div className="col-span-12 lg:col-span-5">
+              <div className="ml-16">
+                <LiaisonForm />
+              </div>
             </div>
           </div>
         </div>
