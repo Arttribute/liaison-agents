@@ -1,6 +1,6 @@
 "use client";
 import { Check } from "lucide-react";
-import { Label } from "@/components/ui/label";
+import Image from "next/image";
 import { cn } from "@/lib/utils";
 
 interface NetworkSelectProps {
@@ -11,19 +11,33 @@ interface NetworkSelectProps {
 }
 
 const networks = [
-  { value: "ethereum", label: "Ethereum" },
-  { value: "base", label: "Base" },
-  { value: "arbitrum", label: "Arbitrum" },
-  { value: "optimism", label: "Optimism" },
-  { value: "og", label: "OG" },
+  { value: "ethereum", label: "Ethereum", icon: "/icons/ethereum-logo.svg" },
+  { value: "base", label: "Base", icon: "/icons/base-logo.svg" },
+  { value: "arbitrum", label: "Arbitrum", icon: "/icons/arbitrum-logo.svg" },
+  { value: "optimism", label: "Optimism", icon: "/icons/optimism-logo.svg" },
+  { value: "og", label: "OG", icon: "/icons/ethereum-logo.svg" },
 ];
 
 export function SelectedNetwork({ value }: { value: string }) {
   return (
     <div className="mt-1 border rounded-md p-2">
-      <p className="text-sm">
-        {networks.find((network) => network.value === value)?.label}
-      </p>
+      <div className="flex items-center">
+        <Image
+          src={
+            networks.find((network) => network.value === value)?.icon ||
+            "/icons/ethereum-logo.svg"
+          }
+          alt={
+            networks.find((network) => network.value === value)?.label ||
+            "Ethereum"
+          }
+          width={20}
+          height={20}
+        />
+        <p className="ml-2">
+          {networks.find((network) => network.value === value)?.label}
+        </p>
+      </div>
     </div>
   );
 }
@@ -43,11 +57,18 @@ export function NetworkSelect({
               key={network.value}
               onClick={() => onValueChange(network.value)}
               className={cn(
-                "flex items-center justify-between px-2 py-1.5 rounded-sm text-sm cursor-pointer",
+                "flex items-center px-2 py-1.5 rounded-sm text-sm cursor-pointer",
                 "hover:bg-muted transition-colors"
               )}
             >
-              <span>{network.label}</span>
+              <Image
+                src={network.icon}
+                alt={network.label}
+                width={20}
+                height={20}
+              />
+              <p className="ml-2">{network.label}</p>
+              <div className="flex-grow"></div>
               {value === network.value && (
                 <Check className="h-4 w-4 text-primary" />
               )}
