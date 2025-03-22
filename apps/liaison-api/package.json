@@ -26,6 +26,7 @@
     "openai": "^4.89.0",
     "pinata-web3": "^0.5.4",
     "postgres": "^3.4.5",
+    "solc": "^0.8.29",
     "ts-patch": "^3.3.0",
     "tsc-alias": "^1.8.11",
     "typia": "^8.0.3",
