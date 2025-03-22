@@ -1,9 +1,9 @@
 import "dotenv/config";
-import { createAgent, runAgent } from "#/handlers/agents.handlers.js";
+import { createAgent, runAgent } from "../handlers/agents.handlers.js";
 import { serve } from "@hono/node-server";
 import { Hono } from "hono";
 import { showRoutes } from "hono/dev";
-import { makeAgentToolCall } from "#/handlers/agent-tools.handlers.js";
+import { makeAgentToolCall } from "../handlers/agent-tools.handlers.js";
 
 const v1 = new Hono().basePath("/v1");
 

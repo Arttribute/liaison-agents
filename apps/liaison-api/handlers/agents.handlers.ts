@@ -1,5 +1,5 @@
-import { baseSepolia } from "#/lib/baseSepolia";
-import * as schema from "#/models/schema";
+import { baseSepolia } from "../lib/baseSepolia.js";
+import * as schema from "../models/schema.js";
 import { Wallet } from "@coinbase/coinbase-sdk";
 import {
   eq,
@@ -9,16 +9,19 @@ import {
   sql,
 } from "drizzle-orm";
 import type { Context } from "hono";
-import { AGENT_REGISTRY_ABI } from "lib/abis/AgentRegistryABI";
-import { AGENT_REGISTRY_ADDRESS, COMMON_TOKEN_ADDRESS } from "lib/addresses";
+import { AGENT_REGISTRY_ABI } from "../lib/abis/AgentRegistryABI.js";
+import {
+  AGENT_REGISTRY_ADDRESS,
+  COMMON_TOKEN_ADDRESS,
+} from "../lib/addresses.js";
 import { find, first, map, omit } from "lodash-es";
 import type { Except } from "type-fest";
 import { createWalletClient, getContract, http } from "viem";
 import { privateKeyToAccount } from "viem/accounts";
-import { database as db } from "#/services/database.service";
-import { publicClient } from "#/services/coinbase.service";
+import { database as db } from "../services/database.service.js";
+import { publicClient } from "../services/coinbase.service.js";
 import typia from "typia";
-import type { CDPTool } from "#/tools/cdp.tool";
+import type { CDPTool } from "../tools/cdp.tool.js";
 import dedent from "dedent";
 import type {
   ChatCompletion,
@@ -28,9 +31,9 @@ import type {
   ChatCompletionTool,
 } from "openai/resources.mjs";
 import { HTTPException } from "hono/http-exception";
-import { sessionService } from "#/services/session.service";
-import { openai } from "#/services/openai.service";
-import type { GraphQLTool } from "#/tools/graphql.tool";
+import { sessionService } from "../services/session.service.js";
+import { openai } from "../services/openai.service.js";
+import type { GraphQLTool } from "../tools/graphql.tool.js";
 
 const app = typia.llm.application<CDPTool & GraphQLTool, "chatgpt">();
 

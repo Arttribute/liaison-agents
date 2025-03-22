@@ -1,14 +1,14 @@
-import { baseSepolia } from "#/lib/baseSepolia";
+import { baseSepolia } from "../lib/baseSepolia.js";
 import { Wallet } from "@coinbase/coinbase-sdk";
 import { HDKey } from "@scure/bip32";
 import crypto from "crypto";
 import { eq } from "drizzle-orm";
-import { COMMON_TOKEN_ADDRESS } from "lib/addresses";
+import { COMMON_TOKEN_ADDRESS } from "../lib/addresses.js";
 import { createWalletClient, http, parseUnits } from "viem";
 import { privateKeyToAccount } from "viem/accounts";
-import { database as db } from "./database.service";
+import { database as db } from "./database.service.js";
 import { HTTPException } from "hono/http-exception";
-import { publicClient } from "#/services/coinbase.service";
+import { publicClient } from "../services/coinbase.service.js";
 
 class AgentService {
   public seedToPrivateKey(seed: string) {
