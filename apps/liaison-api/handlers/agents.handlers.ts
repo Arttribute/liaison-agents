@@ -101,12 +101,15 @@ async function createAgentSession(agentId: string) {
 }
 
 export async function runAgent(c: Context) {
-  const props = (await c.res.json()) as {
+  console.log("Running agent");
+  const body = await c.req.json<{
     agentId: string;
     messages?: ChatCompletionMessageParam[];
     sessionId?: string;
-  };
+  }>();
+  const props = body;
   const { agentId, sessionId } = props;
+  console.log("Sent data:", props);
 
   const agent = await db.query.agent.findFirst({
     where: (t) => eq(t.agentId, agentId),
@@ -123,13 +126,13 @@ export async function runAgent(c: Context) {
     throw e;
   });
 
-  const commonsBalance = await wallet.getBalance(COMMON_TOKEN_ADDRESS);
+  //const commonsBalance = await wallet.getBalance(COMMON_TOKEN_ADDRESS);
 
-  if (commonsBalance.lte(0)) {
-    throw new HTTPException(400, { message: "Agent has no tokens" });
-  }
+  //if (commonsBalance.lte(0)) {
+  //  throw new HTTPException(400, { message: "Agent has no tokens" });
+  //}
 
-  console.log(commonsBalance);
+  //console.log(commonsBalance);
 
   let session;
   if (!sessionId) {
@@ -218,13 +221,13 @@ export async function runAgent(c: Context) {
 
   // Charge for running the agent
 
-  const tx = await wallet.createTransfer({
-    amount: 1,
-    assetId: COMMON_TOKEN_ADDRESS,
-    destination: "0xd9303dfc71728f209ef64dd1ad97f5a557ae0fab",
-  });
+  //const tx = await wallet.createTransfer({
+  //  amount: 1,
+  //  assetId: COMMON_TOKEN_ADDRESS,
+  //  destination: "0xd9303dfc71728f209ef64dd1ad97f5a557ae0fab",
+  //});
 
-  await tx.wait();
+  //await tx.wait();
 
   return c.json({
     ...chatGPTResponse.choices[0].message,
@@ -236,7 +239,7 @@ export async function getAllAgents(c: Context) {
   const rows = await agentService.getAgents();
   // Filter only isLiaison
   const liaisonAgents = rows
-    .filter((a) => a.isLiaison === 1)
+    .filter((a) => a.isLiaison === true)
     .map((r) => ({
       name: r.name,
       network: r.network,

@@ -6,6 +6,7 @@ import {
   text,
   integer,
   real,
+  boolean as pgBoolean,
 } from "drizzle-orm/pg-core";
 import { sql } from "drizzle-orm";
 import type { ChatCompletionTool } from "openai/resources/chat/completions";
@@ -31,7 +32,7 @@ export const agent = pgTable("agent", {
   stopSequence: jsonb("stop_sequence").$type<string[]>(),
   avatar: text("avatar"),
 
-  isLiaison: integer("is_liaison").default(0),
+  isLiaison: pgBoolean("is_liaison").default(false).notNull(),
   network: text("network"), // e.g. 'base', 'ethereum', 'arbitrum', ...
   liaisonKeyHash: text("liaison_key_hash"),
   liaisonKeyDisplay: text("liaison_key_display"),

@@ -10,15 +10,16 @@ function hashKey(key: string) {
 }
 
 export const verifyLiaisonKey: MiddlewareHandler = async (c, next) => {
-  const agentId = c.req.param("agentId") || c.req.query("agentId");
+  const { agentId } = await c.req.json();
   if (!agentId) {
     throw new HTTPException(400, { message: "Missing agentId" });
   }
-
+  console.log("Agent ID", agentId);
   const key = c.req.header("x-api-key");
   if (!key) {
     throw new HTTPException(401, { message: "Missing X-API-KEY" });
   }
+  console.log("Key", key);
 
   const row = await database.query.agent.findFirst({
     where: (t) => eq(t.agentId, agentId),

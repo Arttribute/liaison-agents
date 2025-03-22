@@ -37,7 +37,7 @@ export class AgentService {
   }) {
     // 1) Create a new MPC wallet for the user-chosen network
     const { name, owner, network } = opts;
-    const isLiaison = opts.isLiaison ? 1 : 0;
+    const isLiaison = opts.isLiaison || false;
 
     // Create with coinbase sdk
     const wallet = await Wallet.create();
@@ -48,7 +48,7 @@ export class AgentService {
     }
     // If it’s Ethereum mainnet or any other chain, skip faucet
 
-    const agentId = (await wallet.getDefaultAddress())?.toString();
+    const agentId = (await wallet.getDefaultAddress())?.getId().toLowerCase();
 
     let liaisonKey: string | undefined;
     let liaisonKeyHash: string | undefined;

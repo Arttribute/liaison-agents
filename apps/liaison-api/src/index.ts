@@ -9,10 +9,15 @@ import { verifyLiaisonKey } from "../middleware/liaison-auth.middleware.js";
 const v1 = new Hono().basePath("/v1");
 
 v1.post("/agents", createAgent);
-
 // Liaison key required
 v1.post("/agents/run", runAgent);
-v1.post("/agents/tools", verifyLiaisonKey, makeAgentToolCall);
+v1.post("/agents/tools", makeAgentToolCall);
+
+// Liaison key required
+// Liaison key required
+v1.post("/liaison/interact", verifyLiaisonKey, runAgent);
+v1.post("/liaison/tools", verifyLiaisonKey, makeAgentToolCall);
+
 const app = new Hono();
 
 app.get("/", (c) => {
