@@ -1,19 +1,10 @@
-import { baseSepolia } from "../lib/baseSepolia.js";
-import * as schema from "../models/schema.js";
 import { Wallet } from "@coinbase/coinbase-sdk";
-import { eq, type InferInsertModel, type InferSelectModel } from "drizzle-orm";
+import { eq } from "drizzle-orm";
 import type { Context } from "hono";
-import { AGENT_REGISTRY_ABI } from "../lib/abis/AgentRegistryABI.js";
-import {
-  AGENT_REGISTRY_ADDRESS,
-  COMMON_TOKEN_ADDRESS,
-} from "../lib/addresses.js";
-import { find, first, map, omit } from "lodash-es";
-import type { Except } from "type-fest";
-import { createWalletClient, getContract, http } from "viem";
-import { privateKeyToAccount } from "viem/accounts";
+import { COMMON_TOKEN_ADDRESS } from "../lib/addresses.js";
+import { find, map, omit } from "lodash-es";
 import { database as db } from "../services/database.service.js";
-import { publicClient } from "../services/coinbase.service.js";
+
 import typia from "typia";
 import type { CDPTool } from "../tools/cdp.tool.js";
 import dedent from "dedent";
@@ -28,65 +19,35 @@ import { HTTPException } from "hono/http-exception";
 import { sessionService } from "../services/session.service.js";
 import { openai } from "../services/openai.service.js";
 import type { GraphQLTool } from "../tools/graphql.tool.js";
+import { agentService } from "../services/agent.service.js";
 
 const app = typia.llm.application<CDPTool & GraphQLTool, "chatgpt">();
 
 export async function createAgent(c: Context) {
-  const props = (await c.res.json()) as {
-    value: Except<InferInsertModel<typeof schema.agent>, "wallet" | "agentId">;
-    commonsOwned?: boolean;
-  };
-  const wallet = await Wallet.create();
-  const faucetTx = await wallet.faucet();
-  await faucetTx.wait();
-
-  const agentId = (await wallet.getDefaultAddress())?.getId().toLowerCase();
-  let agentOwner = "0xD9303DFc71728f209EF64DD1AD97F5a557AE0Fab";
-  if (!props.commonsOwned) {
-    agentOwner = props.value.owner as string;
+  const body = await c.req.json<{
+    name: string;
+    owner: string;
+    network: string;
+  }>();
+  if (!body.name || !body.owner || !body.network) {
+    throw new HTTPException(400, { message: "Missing fields" });
   }
+  // Assume we want a liaison agent
+  // or you can do: let isLiaison = !!body.isLiaison
+  const result = await agentService.createAgent({
+    name: body.name,
+    owner: body.owner,
+    network: body.network,
+    isLiaison: true,
+  });
 
-  const agentEntry = await db
-    .insert(schema.agent)
-    .values({
-      ...props.value,
-      agentId,
-      owner: agentOwner,
-      wallet: wallet.export(),
-    })
-    .returning()
-    .then(first<InferSelectModel<typeof schema.agent>>);
-
-  if (props.commonsOwned) {
-    const commonsWallet = createWalletClient({
-      account: privateKeyToAccount(
-        process.env.WALLET_PRIVATE_KEY! as `0x${string}`
-      ),
-      chain: baseSepolia,
-      transport: http(),
-    });
-
-    const contract = getContract({
-      abi: AGENT_REGISTRY_ABI,
-      address: AGENT_REGISTRY_ADDRESS,
-
-      client: commonsWallet,
-    });
-
-    const metadata =
-      "https://coral-abstract-dolphin-257.mypinata.cloud/ipfs/bafkreiewjk5fizidkxejplpx34fjva7f6i6azcolanwgtzptanhre6twui";
-
-    const isCommonAgent = true;
-
-    const txHash = await contract.write.registerAgent([
-      agentId,
-      metadata,
-      isCommonAgent,
-    ]);
-
-    await publicClient.waitForTransactionReceipt({ hash: txHash });
-  }
-  return c.json(agentEntry);
+  // Return once
+  return c.json({
+    agentId: result.agent.agentId,
+    name: result.agent.name,
+    liaisonKey: result.liaisonKey || null,
+    liaisonKeyDisplay: result.agent.liaisonKeyDisplay || null,
+  });
 }
 
 async function createAgentSession(agentId: string) {
@@ -102,7 +63,7 @@ async function createAgentSession(agentId: string) {
     {
       role: "system",
       content: dedent`You are the following agent:
-      ${JSON.stringify(omit(agent, ["instructions", "wallet"]))}
+      ${JSON.stringify(omit(agent, ["instructions", "persona", "wallet"]))}
       Use any tools nessecary to get information in order to perform the task.
 
       The following is the persona you are meant to adopt:
@@ -111,6 +72,7 @@ async function createAgentSession(agentId: string) {
       The following are the instructions you are meant to follow:
       ${agent.instructions}`,
     },
+    // ...(props.messages || []),
   ];
 
   const tools = map(
@@ -161,13 +123,13 @@ export async function runAgent(c: Context) {
     throw e;
   });
 
-  //const commonsBalance = await wallet.getBalance(COMMON_TOKEN_ADDRESS);
+  const commonsBalance = await wallet.getBalance(COMMON_TOKEN_ADDRESS);
 
-  //if (commonsBalance.lte(0)) {
-  //  throw new HTTPException(400, { message: "Agent has no tokens" });
-  //}
+  if (commonsBalance.lte(0)) {
+    throw new HTTPException(400, { message: "Agent has no tokens" });
+  }
 
-  //console.log(commonsBalance);
+  console.log(commonsBalance);
 
   let session;
   if (!sessionId) {
@@ -256,16 +218,40 @@ export async function runAgent(c: Context) {
 
   // Charge for running the agent
 
-  // const tx = await wallet.createTransfer({
-  //   amount: 1,
-  //   assetId: COMMON_TOKEN_ADDRESS,
-  //   destination: "0xd9303dfc71728f209ef64dd1ad97f5a557ae0fab",
-  // });
+  const tx = await wallet.createTransfer({
+    amount: 1,
+    assetId: COMMON_TOKEN_ADDRESS,
+    destination: "0xd9303dfc71728f209ef64dd1ad97f5a557ae0fab",
+  });
 
-  //await tx.wait();
+  await tx.wait();
 
   return c.json({
     ...chatGPTResponse.choices[0].message,
     sessionId: session?.sessionId,
   });
+}
+
+export async function getAllAgents(c: Context) {
+  const rows = await agentService.getAgents();
+  // Filter only isLiaison
+  const liaisonAgents = rows
+    .filter((a) => a.isLiaison === 1)
+    .map((r) => ({
+      name: r.name,
+      network: r.network,
+      liaisonKey: r.liaisonKeyDisplay || "",
+      createdAt: r.createdAt.toISOString(),
+      lastUsed: "N/A",
+      agentId: r.agentId,
+    }));
+  return c.json(liaisonAgents);
+}
+
+export async function getAgentById(c: Context) {
+  const agentId = c.req.param("agentId");
+  if (!agentId) throw new HTTPException(400, { message: "Missing agentId" });
+
+  const row = await agentService.getAgent(agentId);
+  return c.json(omit(row, ["wallet", "liaisonKeyHash"]));
 }

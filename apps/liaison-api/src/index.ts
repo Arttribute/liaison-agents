@@ -11,8 +11,8 @@ const v1 = new Hono().basePath("/v1");
 v1.post("/agents", createAgent);
 
 // Liaison key required
-v1.post("/agents/:agentId/run", runAgent);
-v1.post("/agents/:agentId/tools", verifyLiaisonKey, makeAgentToolCall);
+v1.post("/agents/run", runAgent);
+v1.post("/agents/tools", verifyLiaisonKey, makeAgentToolCall);
 const app = new Hono();
 
 app.get("/", (c) => {
