@@ -244,7 +244,7 @@ export default function LiaisonForm() {
 
           <Button
             className="mt-3 w-full"
-            onClick={() => router.push("/studio/agents")}
+            onClick={() => router.push("/studio")}
           >
             {"Go to Dashboard"}
           </Button>

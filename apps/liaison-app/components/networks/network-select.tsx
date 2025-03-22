@@ -10,7 +10,7 @@ interface NetworkSelectProps {
   label?: string;
 }
 
-const networks = [
+export const Networks = [
   { value: "ethereum", label: "Ethereum", icon: "/icons/ethereum-logo.svg" },
   { value: "base", label: "Base", icon: "/icons/base-logo.svg" },
   { value: "arbitrum", label: "Arbitrum", icon: "/icons/arbitrum-logo.svg" },
@@ -19,6 +19,7 @@ const networks = [
 ];
 
 export function SelectedNetwork({ value }: { value: string }) {
+  const networks = Networks;
   return (
     <div className="mt-1 border rounded-md p-2">
       <div className="flex items-center">
@@ -27,10 +28,7 @@ export function SelectedNetwork({ value }: { value: string }) {
             networks.find((network) => network.value === value)?.icon ||
             "/icons/ethereum-logo.svg"
           }
-          alt={
-            networks.find((network) => network.value === value)?.label ||
-            "Ethereum"
-          }
+          alt={value}
           width={20}
           height={20}
         />
@@ -48,6 +46,7 @@ export function NetworkSelect({
   className,
   label = "Network",
 }: NetworkSelectProps) {
+  const networks = Networks;
   return (
     <div className={cn("w-full", className)}>
       <div className="mt-1 border rounded-md p-1">
