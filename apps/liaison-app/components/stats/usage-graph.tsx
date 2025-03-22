@@ -109,7 +109,16 @@ export function UsageGraph({ data, timeSpan }: UsageGraphProps) {
             vertical={false}
             stroke="hsl(var(--muted))"
           />
-          <ChartTooltip content={<CustomTooltip timeSpan={timeSpan} />} />
+          <ChartTooltip
+            content={
+              <CustomTooltip
+                timeSpan={timeSpan}
+                active={false}
+                payload={[]}
+                label={""}
+              />
+            }
+          />
           <Area
             type="monotone"
             dataKey="value"
@@ -125,7 +134,17 @@ export function UsageGraph({ data, timeSpan }: UsageGraphProps) {
 }
 
 // Custom tooltip component
-function CustomTooltip({ active, payload, label, timeSpan }: any) {
+function CustomTooltip({
+  active,
+  payload,
+  label,
+  timeSpan,
+}: {
+  active: boolean;
+  payload: Array<{ value: number }>;
+  label: string;
+  timeSpan: string;
+}) {
   if (active && payload && payload.length) {
     const date = parseISO(label);
 

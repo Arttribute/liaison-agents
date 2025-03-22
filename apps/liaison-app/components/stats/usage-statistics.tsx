@@ -69,9 +69,9 @@ export function UsageStatistics() {
     <div className="space-y-6">
       <div className="flex flex-col md:flex-row gap-4 md:items-center md:justify-between">
         <div>
-          <h2 className="text-xl font-semibold">Usage Overview</h2>
+          <h2 className="text-xl font-semibold">{"Usage Overview"}</h2>
           <p className="text-muted-foreground">
-            Monitor your agent's activity and tool usage
+            {"Monitor your agent's activity and tool usage"}
           </p>
         </div>
 
@@ -101,13 +101,16 @@ export function UsageStatistics() {
         </Card>
         <Card>
           <CardHeader className="pb-2">
-            <CardDescription>Avg. Response Time</CardDescription>
-            <CardTitle className="text-2xl">{averageDuration}ms</CardTitle>
+            <CardDescription>{"Avg. Response Time"}</CardDescription>
+            <CardTitle className="text-2xl">
+              {averageDuration}
+              {"ms"}
+            </CardTitle>
           </CardHeader>
         </Card>
         <Card>
           <CardHeader className="pb-2">
-            <CardDescription>Success Rate</CardDescription>
+            <CardDescription>{"Success Rate"}</CardDescription>
             <CardTitle className="text-2xl">{successRate}%</CardTitle>
           </CardHeader>
         </Card>
@@ -115,9 +118,9 @@ export function UsageStatistics() {
 
       <Card>
         <CardHeader>
-          <CardTitle>Usage Over Time</CardTitle>
+          <CardTitle>{"Usage Over Time"}</CardTitle>
           <CardDescription>
-            Total number of calls over the selected time period
+            {"Total number of calls over the selected time period"}
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -129,9 +132,9 @@ export function UsageStatistics() {
 
       <Card>
         <CardHeader>
-          <CardTitle>Tool Usage Statistics</CardTitle>
+          <CardTitle>{"Tool Usage Statistics"}</CardTitle>
           <CardDescription>
-            Detailed usage statistics for each tool
+            {"Detailed usage statistics for each tool"}
           </CardDescription>
         </CardHeader>
         <CardContent>

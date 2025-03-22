@@ -44,7 +44,6 @@ export function NetworkSelect({
   value,
   onValueChange,
   className,
-  label = "Network",
 }: NetworkSelectProps) {
   const networks = Networks;
   return (

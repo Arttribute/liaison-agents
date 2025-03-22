@@ -1,12 +1,13 @@
 import { NextResponse } from "next/server";
 
-const baseUrl = process.env.NEXT_PUBLIC_NEST_API_BASE_URL;
+//const baseUrl = process.env.NEXT_PUBLIC_NEST_API_BASE_URL;
 
 /**
  * POST /api/liaison
  * Creates a liaison  agent
  */
-export async function POST(request: Request) {
+//export async function POST(request: Request) {
+export async function POST() {
   try {
     // const body = await request.json();
     // const res = await fetch(`${baseUrl}/v1/liaison`, {
@@ -34,8 +35,13 @@ export async function POST(request: Request) {
       updatedAt: new Date().toISOString(),
     };
     return NextResponse.json(data, { status: 201 });
-  } catch (error: any) {
-    console.error("Error creating liaison agent:", error.message);
-    return NextResponse.json({ error: error.message }, { status: 500 });
+  } catch (error) {
+    if (error instanceof Error) {
+      console.error("Error creating liaison agent:", error.message);
+      return NextResponse.json({ error: error.message }, { status: 500 });
+    } else {
+      console.error("Error creating liaison agent:", error);
+      return NextResponse.json({ error: "Unknown error" }, { status: 500 });
+    }
   }
 }
