@@ -12,7 +12,7 @@ import { Search } from "lucide-react";
 const sampleLogs = [
   {
     id: "log-1",
-    instruction: "Fetch user data from database",
+    action: "Fetch user data from database",
     status: "success",
     message: "Successfully retrieved user data",
     timestamp: new Date(Date.now() - 1000 * 60 * 5).toISOString(),
@@ -30,7 +30,7 @@ const sampleLogs = [
   },
   {
     id: "log-2",
-    instruction: "Process payment transaction",
+    action: "Process payment transaction",
     status: "error",
     message: "Payment gateway timeout",
     timestamp: new Date(Date.now() - 1000 * 60 * 15).toISOString(),
@@ -54,7 +54,7 @@ const sampleLogs = [
   },
   {
     id: "log-3",
-    instruction: "Generate weekly report",
+    action: "Generate weekly report",
     status: "warning",
     message: "Report generated with incomplete data",
     timestamp: new Date(Date.now() - 1000 * 60 * 30).toISOString(),
@@ -78,7 +78,7 @@ const sampleLogs = [
   },
   {
     id: "log-4",
-    instruction: "Send notification to users",
+    action: "Send notification to users",
     status: "success",
     message: "Notifications sent to all users",
     timestamp: new Date(Date.now() - 1000 * 60 * 45).toISOString(),
@@ -102,7 +102,7 @@ const sampleLogs = [
   },
   {
     id: "log-5",
-    instruction: "Update product inventory",
+    action: "Update product inventory",
     status: "success",
     message: "Inventory updated successfully",
     timestamp: new Date(Date.now() - 1000 * 60 * 60).toISOString(),
@@ -128,7 +128,7 @@ export function LogsDisplay() {
 
   const filteredLogs = sampleLogs.filter(
     (log) =>
-      log.instruction.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      log.action.toLowerCase().includes(searchTerm.toLowerCase()) ||
       log.message.toLowerCase().includes(searchTerm.toLowerCase()) ||
       log.agent.toLowerCase().includes(searchTerm.toLowerCase()) ||
       log.sessionId.toLowerCase().includes(searchTerm.toLowerCase())
@@ -153,7 +153,7 @@ export function LogsDisplay() {
             />
           </div>
           <div className="flex justify-between items-center mt-4 text-sm font-medium text-muted-foreground">
-            <div className="w-2/5">Instruction</div>
+            <div className="w-2/5">Action</div>
             <div className="w-1/5">Session ID</div>
             <div className="w-1/5">Status</div>
             <div className="w-1/5">Time</div>
@@ -179,13 +179,12 @@ export function LogsDisplay() {
 
       {selectedLog && (
         <div className="md:w-1/3 border rounded-lg shadow-sm overflow-hidden">
-          <div className="p-4 border-b bg-muted/30 flex justify-between items-center">
-            <h3 className="font-medium">Log Details</h3>
+          <div className="border-b bg-muted/30 flex justify-between items-center">
             <Button
               variant="ghost"
               size="sm"
               onClick={() => setSelectedLog(null)}
-              className="h-8 px-2"
+              className="px-2"
             >
               Close
             </Button>

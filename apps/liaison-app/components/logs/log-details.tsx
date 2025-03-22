@@ -12,21 +12,21 @@ export function LogDetails({ log }: LogDetailsProps) {
     switch (status) {
       case "success":
         return (
-          <div className="flex items-center gap-1.5 text-green-500 bg-green-50 dark:bg-green-950/30 px-2.5 py-1 rounded-full text-xs font-medium">
+          <div className="flex items-center gap-1.5 text-green-600 bg-green-50 dark:bg-green-950/30 px-2.5 py-1 rounded-full text-xs font-medium">
             <CheckCircle className="h-3.5 w-3.5" />
             Success
           </div>
         );
       case "warning":
         return (
-          <div className="flex items-center gap-1.5 text-amber-500 bg-amber-50 dark:bg-amber-950/30 px-2.5 py-1 rounded-full text-xs font-medium">
+          <div className="flex items-center gap-1.5 text-amber-600 bg-amber-50 dark:bg-amber-950/30 px-2.5 py-1 rounded-full text-xs font-medium">
             <Clock className="h-3.5 w-3.5" />
             Warning
           </div>
         );
       case "error":
         return (
-          <div className="flex items-center gap-1.5 text-red-500 bg-red-50 dark:bg-red-950/30 px-2.5 py-1 rounded-full text-xs font-medium">
+          <div className="flex items-center gap-1.5 text-red-600 bg-red-50 dark:bg-red-950/30 px-2.5 py-1 rounded-full text-xs font-medium">
             <AlertCircle className="h-3.5 w-3.5" />
             Error
           </div>
@@ -39,11 +39,11 @@ export function LogDetails({ log }: LogDetailsProps) {
   const getToolStatusIcon = (status: string) => {
     switch (status) {
       case "success":
-        return <CheckCircle className="h-4 w-4 text-green-500" />;
+        return <CheckCircle className="h-4 w-4 text-green-600" />;
       case "warning":
-        return <Clock className="h-4 w-4 text-amber-500" />;
+        return <Clock className="h-4 w-4 text-amber-600" />;
       case "error":
-        return <AlertCircle className="h-4 w-4 text-red-500" />;
+        return <AlertCircle className="h-4 w-4 text-red-600" />;
       default:
         return null;
     }
@@ -52,11 +52,11 @@ export function LogDetails({ log }: LogDetailsProps) {
   const getToolStatusClass = (status: string) => {
     switch (status) {
       case "success":
-        return "text-green-500 border-green-200 dark:border-green-900";
+        return "text-green-600 border-green-300 dark:border-green-900";
       case "warning":
-        return "text-amber-500 border-amber-200 dark:border-amber-900";
+        return "text-amber-600 border-amber-300 dark:border-amber-900";
       case "error":
-        return "text-red-500 border-red-200 dark:border-red-900";
+        return "text-red-600 border-red-300 dark:border-red-900";
       default:
         return "";
     }
@@ -66,7 +66,7 @@ export function LogDetails({ log }: LogDetailsProps) {
     <div className="p-4 space-y-6">
       <div className="flex flex-col">
         <div className="flex justify-between items-start">
-          <h3 className="font-medium text-sm">{log.instruction}</h3>
+          <h3 className="font-medium text-sm">{log.action}</h3>
           {getStatusBadge(log.status)}
         </div>
         <p className="text-muted-foreground text-xs">{log.message}</p>

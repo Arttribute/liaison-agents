@@ -16,11 +16,11 @@ export function LogItem({ log, isSelected, onClick }: LogItemProps) {
   const getStatusIcon = (status: string) => {
     switch (status) {
       case "success":
-        return <CheckCircle className="h-4 w-4 text-green-500" />;
+        return <CheckCircle className="h-4 w-4 text-green-600" />;
       case "warning":
-        return <Clock className="h-4 w-4 text-amber-500" />;
+        return <Clock className="h-4 w-4 text-amber-600" />;
       case "error":
-        return <AlertCircle className="h-4 w-4 text-red-500" />;
+        return <AlertCircle className="h-4 w-4 text-red-600" />;
       default:
         return null;
     }
@@ -29,11 +29,11 @@ export function LogItem({ log, isSelected, onClick }: LogItemProps) {
   const getStatusText = (status: string) => {
     switch (status) {
       case "success":
-        return "text-green-500";
+        return "text-green-600";
       case "warning":
-        return "text-amber-500";
+        return "text-amber-600";
       case "error":
-        return "text-red-500";
+        return "text-red-600";
       default:
         return "";
     }
@@ -48,7 +48,7 @@ export function LogItem({ log, isSelected, onClick }: LogItemProps) {
       onClick={onClick}
     >
       <div className="w-2/5 truncate pr-4">
-        <div className="text-sm font-medium truncate">{log.instruction}</div>
+        <div className="text-sm font-medium truncate">{log.action}</div>
         <div className="text-xs text-muted-foreground truncate">
           {log.message}
         </div>
