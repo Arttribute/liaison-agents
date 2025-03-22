@@ -5,7 +5,6 @@ import { useRouter } from "next/navigation";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
 import { Copy, Check, InfoIcon } from "lucide-react";
 import { useAuth } from "@/context/auth-context";
 import {
@@ -25,16 +24,21 @@ export default function LiaisonForm() {
     network: "base", // Default network
   });
 
-  const [result, setResult] = useState<any>(null);
+  interface ResultType {
+    liaisonKey: string;
+    agentId: string;
+  }
+
+  const [result, setResult] = useState<ResultType | null>(null);
   const [loading, setLoading] = useState(false);
   const [copiedField, setCopiedField] = useState<string | null>(null);
-  const [toolSchema, setToolSchema] = useState<any>(null);
+  const [toolSchema, setToolSchema] = useState<object>({});
 
-  const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) => {
-    setAgentData({ ...agentData, [e.target.name]: e.target.value });
-  };
+  // const handleChange = (
+  //   e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  // ) => {
+  //   setAgentData({ ...agentData, [e.target.name]: e.target.value });
+  // };
 
   const handleNetworkChange = (network: string) => {
     setAgentData((prev) => ({ ...prev, network }));
@@ -115,8 +119,12 @@ export default function LiaisonForm() {
           },
         },
       });
-    } catch (error: any) {
-      alert(error.message);
+    } catch (error) {
+      if (error instanceof Error) {
+        alert(error.message);
+      } else {
+        alert("An unknown error occurred.");
+      }
     } finally {
       setLoading(false);
     }
@@ -177,9 +185,9 @@ export default function LiaisonForm() {
             </h2>
           </div>
           {/* Agent ID */}
-
-          {/* Liaison Secret */}
-          <p className="text-sm font-semibold">{"Liaison Key"}</p>
+          {result?.liaisonKey.slice(0, 14) +
+            "...." +
+            result?.liaisonKey.slice(-14)}
           <div className="flex justify-between items-center bg-gray-100 px-4 p-1 rounded">
             <p className="text-sm">
               {result.liaisonKey.slice(0, 14) +

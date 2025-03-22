@@ -3,13 +3,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
-import {
-  PanelLeft,
-  BookOpen,
-  PlusCircle,
-  Sparkles,
-  ListIcon,
-} from "lucide-react";
+import { PanelLeft, BookOpen, PlusCircle, ListIcon } from "lucide-react";
 
 export function SidebarNav() {
   const [isOpen, setIsOpen] = useState(false);
