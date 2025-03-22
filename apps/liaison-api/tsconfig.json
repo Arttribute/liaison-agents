@@ -1,14 +1,26 @@
 {
   "compilerOptions": {
     "target": "ESNext",
-    "module": "NodeNext",
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
+    "baseUrl": "./",
     "strict": true,
     "verbatimModuleSyntax": true,
     "skipLibCheck": true,
     "types": [
       "node"
     ],
+    "paths": {
+			"#/*": ["./*"]
+		},
+    "outDir": "./dist",
     "jsx": "react-jsx",
     "jsxImportSource": "hono/jsx",
+    "plugins": [
+      { "transform": "typia/lib/transform" }
+    ]
+  },
+  "tsc-alias": {
+    "resolveFullPaths": true
   }
 }
