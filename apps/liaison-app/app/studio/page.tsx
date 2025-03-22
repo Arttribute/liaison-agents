@@ -1,5 +1,6 @@
 import AppBar from "@/components/layout/app-bar";
 import { LogsDisplay } from "@/components/logs/logs-display";
+import { UsageStatistics } from "@/components/stats/usage-statistics";
 import { LiasonsTable } from "@/components/studio/liaisons-table";
 import { SidebarNav } from "@/components/studio/sidebar-nav";
 
@@ -13,6 +14,7 @@ export default function Home() {
         <div className="flex flex-col m-4 w-full">
           <LiasonsTable />
           <LogsDisplay />
+          <UsageStatistics />
         </div>
       </div>
     </div>
