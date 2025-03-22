@@ -1,13 +1,7 @@
 import { baseSepolia } from "#/lib/baseSepolia";
 import * as schema from "#/models/schema";
 import { Wallet } from "@coinbase/coinbase-sdk";
-import {
-  eq,
-  inArray,
-  type InferInsertModel,
-  type InferSelectModel,
-  sql,
-} from "drizzle-orm";
+import { eq, type InferInsertModel, type InferSelectModel } from "drizzle-orm";
 import type { Context } from "hono";
 import { AGENT_REGISTRY_ABI } from "lib/abis/AgentRegistryABI";
 import { AGENT_REGISTRY_ADDRESS, COMMON_TOKEN_ADDRESS } from "lib/addresses";
@@ -89,15 +83,6 @@ export async function createAgent(c: Context) {
 
     await publicClient.waitForTransactionReceipt({ hash: txHash });
   }
-
-  // TODO: Work on interval
-  // @ts-expect-error
-  const interval = props.interval || 10;
-
-  //   await db.execute(
-  //     sql`SELECT cron.schedule(FORMAT('agent:%s:schedule', ${agentEntry?.agentId}),'*/${interval} * * * *', FORMAT('SELECT trigger_agent(%L)', ${agentEntry?.agentId}))`
-  //   );
-
   return c.json(agentEntry);
 }
 
@@ -114,7 +99,7 @@ async function createAgentSession(agentId: string) {
     {
       role: "system",
       content: dedent`You are the following agent:
-      ${JSON.stringify(omit(agent, ["instructions", "persona", "wallet"]))}
+      ${JSON.stringify(omit(agent, ["instructions", "wallet"]))}
       Use any tools nessecary to get information in order to perform the task.
 
       The following is the persona you are meant to adopt:
@@ -123,7 +108,6 @@ async function createAgentSession(agentId: string) {
       The following are the instructions you are meant to follow:
       ${agent.instructions}`,
     },
-    // ...(props.messages || []),
   ];
 
   const tools = map(
@@ -269,13 +253,13 @@ export async function runAgent(c: Context) {
 
   // Charge for running the agent
 
-  const tx = await wallet.createTransfer({
-    amount: 1,
-    assetId: COMMON_TOKEN_ADDRESS,
-    destination: "0xd9303dfc71728f209ef64dd1ad97f5a557ae0fab",
-  });
+  // const tx = await wallet.createTransfer({
+  //   amount: 1,
+  //   assetId: COMMON_TOKEN_ADDRESS,
+  //   destination: "0xd9303dfc71728f209ef64dd1ad97f5a557ae0fab",
+  // });
 
-  await tx.wait();
+  //await tx.wait();
 
   return c.json({
     ...chatGPTResponse.choices[0].message,
