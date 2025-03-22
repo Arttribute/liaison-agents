@@ -1,9 +1,9 @@
 import { createWalletClient, http, getContract } from "viem";
 import { privateKeyToAccount } from "viem/accounts";
-import { getChainByName } from "#/lib/chains.js";
-import { publicClient } from "#/services/coinbase.service.js";
-import { SolcService } from "#/services/solc.service.js";
-import { fetchAbiFromExplorer } from "#/services/etherscan.service.js";
+import { getChainByName } from "../lib/chains.js";
+import { publicClient } from "../services/coinbase.service.js";
+import { SolcService } from "../services/solc.service.js";
+import { fetchAbiFromExplorer } from "../services/etherscan.service.js";
 
 export class ContractTool {
   constructor(private network: string) {}

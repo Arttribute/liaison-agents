@@ -1,6 +1,6 @@
 import { eq } from "drizzle-orm";
 import { database as db } from "./database.service.js";
-import { agent } from "#/models/schema.js";
+import { agent } from "../models/schema.js";
 import { HTTPException } from "hono/http-exception";
 import { Wallet } from "@coinbase/coinbase-sdk";
 import type { WalletData } from "@coinbase/coinbase-sdk";
@@ -8,10 +8,10 @@ import { createWalletClient, http } from "viem";
 import crypto from "crypto";
 import { HDKey } from "@scure/bip32";
 import { privateKeyToAccount } from "viem/accounts";
-import { getChainByName } from "#/lib/chains.js";
+import { getChainByName } from "../lib/chains.js";
 import { parseUnits } from "viem";
 import { publicClient } from "./coinbase.service.js";
-import { COMMON_TOKEN_ADDRESS } from "#/lib/addresses.js";
+import { COMMON_TOKEN_ADDRESS } from "../lib/addresses.js";
 
 function hashKey(key: string): string {
   return crypto.createHash("sha256").update(key).digest("hex");

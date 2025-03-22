@@ -1,4 +1,4 @@
-import { getChainConfig } from "#/lib/chains.js";
+import { getChainConfig } from "../lib/chains.js";
 
 /**
  * Fetch a verified contract's ABI from an Etherscan-like explorer.
