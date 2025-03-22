@@ -13,30 +13,20 @@ import { parseUnits } from "viem";
 import { publicClient } from "./coinbase.service.js";
 import { COMMON_TOKEN_ADDRESS } from "#/lib/addresses.js";
 
-function seedToPrivateKey(seed: string) {
-  const seedBuffer = Buffer.from(seed, "hex");
-  const node = HDKey.fromMasterSeed(seedBuffer);
-  const childNode = node.derive("m/44'/60'/0'/0/0");
-  return Buffer.from(childNode.privateKey!).toString("hex");
-}
-
 function hashKey(key: string): string {
   return crypto.createHash("sha256").update(key).digest("hex");
 }
 
 export class AgentService {
-  public async getAgent(agentId: string) {
-    const row = await db.query.agent.findFirst({
-      where: (tbl) => eq(tbl.agentId, agentId),
-    });
-    if (!row) {
-      throw new HTTPException(404, { message: "Agent not found" });
-    }
-    return row;
-  }
+  public seedToPrivateKey(seed: string) {
+    const seedBuffer = Buffer.from(seed, "hex");
+    const hmac = crypto.createHmac("sha512", "Bitcoin seed");
+    hmac.update(seedBuffer);
 
-  public async getAgents() {
-    return db.query.agent.findMany();
+    const node = HDKey.fromMasterSeed(seedBuffer);
+    const childNode = node.derive("m/44'/60'/0'/0/0"); // Standard Ethereum path
+    const privateKey = Buffer.from(childNode.privateKey!).toString("hex");
+    return privateKey;
   }
 
   public async createAgent(opts: {
@@ -91,6 +81,20 @@ export class AgentService {
     return { agent: inserted[0], liaisonKey };
   }
 
+  public async getAgent(agentId: string) {
+    const row = await db.query.agent.findFirst({
+      where: (tbl) => eq(tbl.agentId, agentId),
+    });
+    if (!row) {
+      throw new HTTPException(404, { message: "Agent not found" });
+    }
+    return row;
+  }
+
+  public async getAgents() {
+    return db.query.agent.findMany();
+  }
+
   public async purchaseCommons(props: {
     agentId: string;
     amountInCommon: string;
@@ -100,7 +104,7 @@ export class AgentService {
 
     // parse
     const amountInWei = BigInt(parseUnits(props.amountInCommon, 18));
-    const pk = seedToPrivateKey(row.wallet.seed);
+    const pk = await this.seedToPrivateKey(row.wallet.seed);
 
     // dynamically pick chain
     const chain = getChainByName(row.network || "base");

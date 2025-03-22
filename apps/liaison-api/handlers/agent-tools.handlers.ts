@@ -17,7 +17,7 @@ export async function makeAgentToolCall(c: Context) {
 
   const { agentId } = metadata;
 
-  const agent = await agentService.getAgent({ agentId });
+  const agent = await agentService.getAgent(agentId);
 
   if (!agent) {
     throw new HTTPException(400, { message: "Agent not found" });
