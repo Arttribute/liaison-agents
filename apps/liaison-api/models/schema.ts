@@ -15,12 +15,12 @@ export const agent = pgTable("agent", {
   agentId: text("agent_id")
     .default(sql`uuid_generate_v4()`)
     .primaryKey(),
-  wallet: jsonb().notNull().$type<WalletData>(),
-  instructions: text(),
-  persona: text(),
-  owner: text(),
-  name: text().notNull(),
-  knowledgebase: text(),
+  wallet: jsonb("wallet").notNull().$type<WalletData>(),
+  name: text("name").notNull(),
+  owner: text("owner"),
+  instructions: text("instructions"),
+  persona: text("persona"),
+  knowledgebase: text("knowledgebase"),
   externalTools: jsonb("external_tools").$type<string[]>(),
   commonTools: jsonb("common_tools").$type<string[]>(),
   temperature: real("temperature"),
@@ -29,7 +29,12 @@ export const agent = pgTable("agent", {
   presencePenalty: real("presence_penalty"),
   frequencyPenalty: real("frequency_penalty"),
   stopSequence: jsonb("stop_sequence").$type<string[]>(),
-  avatar: text(),
+  avatar: text("avatar"),
+
+  isLiaison: integer("is_liaison").default(0),
+  network: text("network"), // e.g. 'base', 'ethereum', 'arbitrum', ...
+  liaisonKeyHash: text("liaison_key_hash"),
+  liaisonKeyDisplay: text("liaison_key_display"),
 
   createdAt: timestamp("created_at", { withTimezone: true })
     .default(sql`timezone('utc', now())`)
