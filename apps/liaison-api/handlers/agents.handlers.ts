@@ -158,13 +158,13 @@ export async function runAgent(c: Context) {
     throw e;
   });
 
-  const commonsBalance = await wallet.getBalance(COMMON_TOKEN_ADDRESS);
+  //const commonsBalance = await wallet.getBalance(COMMON_TOKEN_ADDRESS);
 
-  if (commonsBalance.lte(0)) {
-    throw new HTTPException(400, { message: "Agent has no tokens" });
-  }
+  //if (commonsBalance.lte(0)) {
+  //  throw new HTTPException(400, { message: "Agent has no tokens" });
+  //}
 
-  console.log(commonsBalance);
+  //console.log(commonsBalance);
 
   let session;
   if (!sessionId) {
