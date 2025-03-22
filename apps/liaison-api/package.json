@@ -2,7 +2,7 @@
   "name": "liaison-api",
   "type": "module",
   "scripts": {
-    "dev": "tsx watch src/index.ts",
+    "dev": "nodemon --exec node --loader ts-node/esm src/index.ts",
     "start": "node ./dist/src/index.js",
     "build": "tsc && tsc-alias",
     "lint": "eslint .",
@@ -33,9 +33,16 @@
     "viem": "^2.23.13"
   },
   "devDependencies": {
+    "@swc/core": "^1.11.11",
+    "@swc/helpers": "^0.5.15",
     "@types/lodash-es": "^4.17.12",
     "@types/node": "^20.11.17",
+    "nodemon": "^3.1.9",
+    "regenerator-runtime": "^0.14.1",
+    "ts-node": "^10.9.2",
+    "tsconfig-paths": "^4.2.0",
     "tsx": "^4.7.1",
-    "type-fest": "^4.37.0"
+    "type-fest": "^4.37.0",
+    "typescript": "^5.8.2"
   }
 }

@@ -1,8 +1,8 @@
-import * as schema from "#/models/schema";
+import * as schema from "../models/schema.js";
 import { HTTPException } from "hono/http-exception";
 import { eq, type InferInsertModel, type InferSelectModel } from "drizzle-orm";
 import { first } from "lodash-es";
-import { database as db } from "./database.service";
+import { database as db } from "./database.service.js";
 
 export class SessionService {
   public async createSession(props: {

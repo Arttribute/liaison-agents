@@ -1,6 +1,6 @@
-import { agentService } from "#/services/agent.service";
-import { applyDefaults, CDPToolEngine } from "#/tools/cdp.tool";
-import { GraphQLToolEngine } from "#/tools/graphql.tool";
+import { agentService } from "../services/agent.service.js";
+import { applyDefaults, CDPToolEngine } from "../tools/cdp.tool.js";
+import { GraphQLToolEngine } from "../tools/graphql.tool.js";
 import { Wallet } from "@coinbase/coinbase-sdk";
 import type { Context } from "hono";
 import { HTTPException } from "hono/http-exception";

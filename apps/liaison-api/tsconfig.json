@@ -22,5 +22,9 @@
   },
   "tsc-alias": {
     "resolveFullPaths": true
-  }
+  },
+  // "ts-node": {
+  //   "swc": true,
+  //   "require": ["tsconfig-paths/register"]
+  // }
 }
