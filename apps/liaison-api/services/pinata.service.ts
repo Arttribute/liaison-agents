@@ -19,7 +19,7 @@ export class PinataService {
    * @param fileName - The name of the file.
    * @param mimeType - The MIME type (e.g. 'text/plain').
    */
-  async uploadFile(
+  public async uploadFile(
     fileBuffer: Buffer,
     fileName: string,
     mimeType: string
@@ -41,7 +41,7 @@ export class PinataService {
   /**
    * Upload a file to IPFS via Pinata using a base64 string.
    */
-  async uploadFileFromBase64(
+  public async uploadFileFromBase64(
     base64String: string,
     fileName: string,
     mimeType: string
@@ -58,7 +58,7 @@ export class PinataService {
   /**
    * Fetch the file content from IPFS via the Pinata gateway.
    */
-  async fetchFile(cid: string): Promise<any> {
+  public async fetchFile(cid: string): Promise<any> {
     try {
       const response = await this.pinata.gateways.get(cid);
       return response.data;
@@ -71,7 +71,7 @@ export class PinataService {
   /**
    * Upload a file from disk.
    */
-  async uploadFileFromDisk(filePath: string): Promise<any> {
+  public async uploadFileFromDisk(filePath: string): Promise<any> {
     try {
       const absolutePath = path.resolve(filePath);
       const fileBuffer = fs.readFileSync(absolutePath);
@@ -89,7 +89,7 @@ export class PinataService {
   /**
    * Upload JSON content as a file.
    */
-  async uploadJsonFile(json: any, fileName: string): Promise<any> {
+  public async uploadJsonFile(json: any, fileName: string): Promise<any> {
     try {
       const fileBuffer = Buffer.from(JSON.stringify(json, null, 2));
       return this.uploadFile(fileBuffer, fileName, "application/json");

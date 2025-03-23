@@ -159,7 +159,7 @@ export async function runAgent(c: Context) {
       ({
         type: "function",
         function: _,
-        endpoint: `http://localhost:${process.env.PORT}/v1/agents/${agentId}/tools`,
+        endpoint: `http://localhost:${process.env.PORT}/v1/agents/tools`,
       } as unknown as ChatCompletionTool & { endpoint: string })
   );
 
@@ -205,7 +205,7 @@ export async function runAgent(c: Context) {
                 message: "Tool endpoint not found",
               });
             }
-
+            console.log("Calling tool", rawToolCall.endpoint);
             // make the request
             const response = await fetch(rawToolCall.endpoint, {
               method: "POST",
@@ -214,24 +214,22 @@ export async function runAgent(c: Context) {
             });
             const dur = Date.now() - callStart;
 
-            if (!response.ok) {
+            const toolCallResponse = await response.json();
+            if (response.ok) {
+              toolUsage.push({
+                name: fnName,
+                status: "success",
+                summary: `Executed ${fnName}`,
+                duration: dur,
+              });
+            } else {
               toolUsage.push({
                 name: fnName,
                 status: "error",
-                summary: `HTTP ${response.status}`,
+                summary: "Error executing tool",
                 duration: dur,
               });
-              throw new HTTPException(400, {
-                message: `Tool call fail: ${await response.text()}`,
-              });
             }
-            const toolCallResponse = await response.json();
-            toolUsage.push({
-              name: fnName,
-              status: "success",
-              summary: `Executed ${fnName}`,
-              duration: dur,
-            });
 
             // add function role message with the result
             completionBody.messages.push({
@@ -239,6 +237,7 @@ export async function runAgent(c: Context) {
               tool_call_id: toolCall.id,
               content: JSON.stringify(toolCallResponse),
             });
+            return toolCallResponse;
           }
           return null;
         })
