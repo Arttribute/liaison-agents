@@ -7,12 +7,13 @@ export interface IpfsTool {
       fileName: string;
       mimeType: string;
       agentId?: string;
-    },
-    _metadata: any
+    }
+    // _metadata: any
   ): Promise<{ ipfsUrl: string }>;
 }
 
 export class IpfsToolEngine implements IpfsTool {
+  // @ts-expect-error
   async uploadFileToIPFS(
     args: {
       base64String: string;
