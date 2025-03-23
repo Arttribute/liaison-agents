@@ -16,8 +16,15 @@
     "outDir": "./dist",
     "jsx": "react-jsx",
     "jsxImportSource": "hono/jsx",
+    "plugins": [
+      { "transform": "typia/lib/transform" }
+    ]
   },
   "tsc-alias": {
     "resolveFullPaths": true
-  }
+  },
+  // "ts-node": {
+  //   "swc": true,
+  //   "require": ["tsconfig-paths/register"]
+  // }
 }

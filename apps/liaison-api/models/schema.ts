@@ -6,6 +6,7 @@ import {
   text,
   integer,
   real,
+  boolean as pgBoolean,
 } from "drizzle-orm/pg-core";
 import { sql } from "drizzle-orm";
 import type { ChatCompletionTool } from "openai/resources/chat/completions";
@@ -15,12 +16,12 @@ export const agent = pgTable("agent", {
   agentId: text("agent_id")
     .default(sql`uuid_generate_v4()`)
     .primaryKey(),
-  wallet: jsonb().notNull().$type<WalletData>(),
-  instructions: text(),
-  persona: text(),
-  owner: text(),
-  name: text().notNull(),
-  knowledgebase: text(),
+  wallet: jsonb("wallet").notNull().$type<WalletData>(),
+  name: text("name").notNull(),
+  owner: text("owner"),
+  instructions: text("instructions"),
+  persona: text("persona"),
+  knowledgebase: text("knowledgebase"),
   externalTools: jsonb("external_tools").$type<string[]>(),
   commonTools: jsonb("common_tools").$type<string[]>(),
   temperature: real("temperature"),
@@ -29,7 +30,12 @@ export const agent = pgTable("agent", {
   presencePenalty: real("presence_penalty"),
   frequencyPenalty: real("frequency_penalty"),
   stopSequence: jsonb("stop_sequence").$type<string[]>(),
-  avatar: text(),
+  avatar: text("avatar"),
+
+  isLiaison: pgBoolean("is_liaison").default(false).notNull(),
+  network: text("network"), // e.g. 'base', 'ethereum', 'arbitrum', ...
+  liaisonKeyHash: text("liaison_key_hash"),
+  liaisonKeyDisplay: text("liaison_key_display"),
 
   createdAt: timestamp("created_at", { withTimezone: true })
     .default(sql`timezone('utc', now())`)
@@ -91,6 +97,30 @@ export const session = pgTable("session", {
   model: jsonb(),
   query: jsonb(),
   history: jsonb(),
+
+  createdAt: timestamp("created_at", { withTimezone: true })
+    .default(sql`timezone('utc', now())`)
+    .notNull(),
+});
+
+export const agentLog = pgTable("agent_log", {
+  logId: uuid("log_id")
+    .default(sql`uuid_generate_v4()`)
+    .primaryKey(),
+  agentId: text("agent_id").notNull(),
+  sessionId: text("session_id"),
+  action: text("action"),
+  message: text("message"),
+  status: text("status"),
+  responseTime: integer("response_time"),
+  tools: jsonb("tools").$type<
+    Array<{
+      name: string;
+      status: string;
+      summary?: string;
+      duration?: number;
+    }>
+  >(),
 
   createdAt: timestamp("created_at", { withTimezone: true })
     .default(sql`timezone('utc', now())`)

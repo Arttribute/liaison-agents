@@ -2,11 +2,12 @@
   "name": "liaison-api",
   "type": "module",
   "scripts": {
-    "dev": "tsx watch src/index.ts",
+    "dev": "nodemon --exec node --loader ts-node/esm src/index.ts",
     "start": "node ./dist/src/index.js",
     "build": "tsc && tsc-alias",
     "lint": "eslint .",
     "format": "prettier --write .",
+    "prepare": "ts-patch install",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
@@ -15,23 +16,33 @@
     "@octokit/graphql": "^8.2.1",
     "@samchon/openapi": "^3.1.0",
     "@scure/bip32": "^1.6.2",
+    "dedent": "^1.5.3",
     "dotenv": "^16.4.7",
     "drizzle-kit": "^0.30.5",
     "drizzle-orm": "^0.40.1",
+    "graphql-request": "^7.1.2",
     "hono": "^4.7.5",
     "lodash-es": "^4.17.21",
     "openai": "^4.89.0",
     "pinata-web3": "^0.5.4",
     "postgres": "^3.4.5",
+    "solc": "^0.8.29",
+    "ts-patch": "^3.3.0",
     "tsc-alias": "^1.8.11",
     "typia": "^8.0.3",
     "viem": "^2.23.13"
   },
   "devDependencies": {
+    "@swc/core": "^1.11.11",
+    "@swc/helpers": "^0.5.15",
     "@types/lodash-es": "^4.17.12",
     "@types/node": "^20.11.17",
+    "nodemon": "^3.1.9",
+    "regenerator-runtime": "^0.14.1",
+    "ts-node": "^10.9.2",
+    "tsconfig-paths": "^4.2.0",
     "tsx": "^4.7.1",
     "type-fest": "^4.37.0",
-    "typescript": "^5"
+    "typescript": "^5.8.2"
   }
 }
