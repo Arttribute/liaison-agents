@@ -10,7 +10,8 @@ const v1 = new Hono().basePath("/v1");
 
 v1.post("/agents", createAgent);
 v1.post("/agents/run", runAgent);
-v1.post("/agents/tools", makeAgentToolCall);
+// v1.post("/agents/tools", makeAgentToolCall);
+v1.post("/agents/:agentId/tools", makeAgentToolCall);
 
 // Liaison key required
 v1.post("/liaison/interact", verifyLiaisonKey, runAgent);
