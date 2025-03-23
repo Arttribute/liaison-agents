@@ -48,7 +48,13 @@ const baseSepolia = defineChain({
   name: "Base Sepolia",
   network: "base-sepolia",
   nativeCurrency: { name: "Base ETH", symbol: "ETH", decimals: 18 },
-  rpcUrls: { default: { http: ["https://rpc.ankr.com/base_sepolia"] } },
+  rpcUrls: {
+    default: {
+      http: [
+        "https://base-sepolia.g.alchemy.com/v2/GdfwUj5ztvKOwgSxHHRA7KJXfkN6fBJ7",
+      ],
+    },
+  },
   blockExplorers: {
     default: { name: "BaseScan", url: "https://sepolia.basescan.org" },
   },

@@ -1,12 +1,10 @@
-import { Wallet } from "@coinbase/coinbase-sdk";
+import type { ContractTool } from "../tools/contract.tool.js";
+import type { IpfsTool } from "../tools/ipfs.tool.js";
+import dedent from "dedent";
 import { eq } from "drizzle-orm";
 import type { Context } from "hono";
-import { COMMON_TOKEN_ADDRESS } from "../lib/addresses.js";
+import { HTTPException } from "hono/http-exception";
 import { find, map, omit } from "lodash-es";
-import { database as db } from "../services/database.service.js";
-import typia from "typia";
-import type { CDPTool } from "../tools/cdp.tool.js";
-import dedent from "dedent";
 import type {
   ChatCompletion,
   ChatCompletionCreateParams,
@@ -14,15 +12,21 @@ import type {
   ChatCompletionMessageParam,
   ChatCompletionTool,
 } from "openai/resources.mjs";
-import { HTTPException } from "hono/http-exception";
-import { sessionService } from "../services/session.service.js";
-import { openai } from "../services/openai.service.js";
-import type { GraphQLTool } from "../tools/graphql.tool.js";
+import typia from "typia";
 import { agentService } from "../services/agent.service.js";
+import { database as db } from "../services/database.service.js";
+import { openai } from "../services/openai.service.js";
+import { sessionService } from "../services/session.service.js";
+import type { CDPTool } from "../tools/cdp.tool.js";
+import type { GraphQLTool } from "../tools/graphql.tool.js";
 import { createLogEntry } from "./logs.handlers.js";
+import { inspect } from "node:util";
 
 // This is the same "app" from typia-based approach
-const app = typia.llm.application<CDPTool & GraphQLTool, "chatgpt">();
+const app = typia.llm.application<
+  CDPTool & GraphQLTool & ContractTool & IpfsTool,
+  "chatgpt"
+>();
 
 export async function createAgent(c: Context) {
   const body = await c.req.json<{
@@ -159,9 +163,11 @@ export async function runAgent(c: Context) {
       ({
         type: "function",
         function: _,
-        endpoint: `http://localhost:${process.env.PORT}/v1/agents/tools`,
+        endpoint: `http://localhost:${process.env.PORT}/v1/agents/${agentId}/tools`,
       } as unknown as ChatCompletionTool & { endpoint: string })
   );
+
+  console.log(inspect(tools, { depth: null }));
 
   let chatGPTResponse: ChatCompletion;
   let finalAIContent = "(No content)";

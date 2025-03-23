@@ -4,6 +4,7 @@ import { getChainByName } from "../lib/chains.js";
 import { publicClient } from "../services/coinbase.service.js";
 import { SolcService } from "../services/solc.service.js";
 import { fetchAbiFromExplorer } from "../services/etherscan.service.js";
+import { AgentService } from "../services/agent.service.js";
 
 export interface ContractTool {
   callContract(
@@ -14,8 +15,8 @@ export interface ContractTool {
       method: string;
       methodArgs?: any[];
       isWrite?: boolean;
-    },
-    _metadata: any
+    }
+    // _metadata: any
   ): Promise<{ status: string; result?: any; txHash?: string }>;
 
   compileAndDeploy(
@@ -24,8 +25,8 @@ export interface ContractTool {
       sourceCode: string;
       contractName?: string;
       constructorArgs?: any[];
-    },
-    _metadata: any
+    }
+    // _metadata: any
   ): Promise<{
     status: string;
     contractAddress: string;
@@ -36,8 +37,8 @@ export interface ContractTool {
     args: {
       sourceCode: string;
       contractName?: string;
-    },
-    _metadata: any
+    }
+    // _metadata: any
   ): Promise<{
     status: string;
     abi: any;
@@ -50,8 +51,8 @@ export interface ContractTool {
       abi: any;
       bytecode: string;
       constructorArgs?: any[];
-    },
-    _metadata: any
+    }
+    // _metadata: any
   ): Promise<{
     status: string;
     contractAddress: string;
@@ -63,14 +64,22 @@ export interface ContractTool {
       sourceCode?: string;
       contractName?: string;
       useExplorer?: boolean;
-    },
-    _metadata: any
+    }
+    // _metadata: any
   ): Promise<{ abi: any }>;
+
+  getBalance(
+    args: {
+      agentId: string;
+    }
+    //_metadata: any
+  ): Promise<{ balance: number }>;
 }
 
 export class ContractToolEngine implements ContractTool {
   constructor(private network: string) {}
 
+  // @ts-expect-error
   public async callContract(
     args: {
       privateKey: string;
@@ -109,6 +118,7 @@ export class ContractToolEngine implements ContractTool {
     }
   }
 
+  // @ts-expect-error
   public async compileAndDeploy(
     args: {
       privateKey: string;
@@ -137,6 +147,7 @@ export class ContractToolEngine implements ContractTool {
     return { status: "success", contractAddress: newAddress, abi };
   }
 
+  // @ts-expect-error
   public async compileContract(
     args: {
       sourceCode: string;
@@ -157,6 +168,7 @@ export class ContractToolEngine implements ContractTool {
     return { status: "success", abi, bytecode };
   }
 
+  // @ts-expect-error
   public async deployContract(
     args: {
       privateKey: string;
@@ -180,6 +192,7 @@ export class ContractToolEngine implements ContractTool {
    * If `useExplorer = true`, fetch ABI from an Etherscan-like explorer.
    * Otherwise, if sourceCode is provided, compile locally to get the ABI.
    */
+  // @ts-expect-error
   public async getAbi(
     args: {
       contractAddress?: string;
@@ -212,5 +225,18 @@ export class ContractToolEngine implements ContractTool {
     throw new Error(
       "Must provide either (contractAddress + useExplorer) or (sourceCode) to get ABI."
     );
+  }
+
+  //check balance using checkTokenBalance method from agent service
+  public async getBalance(args: {
+    agentId: string;
+    contractAddress: string;
+  }): Promise<{ balance: number }> {
+    const agentService = new AgentService();
+    const balance = await agentService.checkTokenBalance(
+      args.agentId,
+      "0x09d3e33fBeB985653bFE868eb5a62435fFA04e4F"
+    );
+    return { balance };
   }
 }

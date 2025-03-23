@@ -74,7 +74,7 @@ export default function LiaisonForm() {
         },
         servers: [
           {
-            url: `${process.env.NEXT_PUBLIC_NEST_API_BASE_URL}/v1`,
+            url: `https://arttribute-liaison-agents-api-prod-848878149972.europe-west1.run.app/v1`,
           },
         ],
         paths: {

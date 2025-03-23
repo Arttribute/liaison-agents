@@ -1,5 +1,5 @@
 // @ts-ignore
-import * as solc from "solc";
+import solc from "solc";
 import { createWalletClient, http } from "viem";
 import { privateKeyToAccount } from "viem/accounts";
 import type { Chain } from "viem";
@@ -45,7 +45,9 @@ export class SolcService {
     constructorArgs: any[] = []
   ) {
     const walletClient = createWalletClient({
-      account: privateKeyToAccount(`0x${privateKey}` as `0x${string}`),
+      account: privateKeyToAccount(
+        `0x${process.env.WALLET_PRIVATE_KEY}` as `0x${string}`
+      ),
       chain: this.chain,
       transport: http(),
     });
@@ -56,6 +58,7 @@ export class SolcService {
       args: constructorArgs,
     });
     // Wait
+    console.log(`Waiting for transaction receipt: ${hash}`);
     const receipt = await publicClient.waitForTransactionReceipt({ hash });
     return receipt.contractAddress;
   }

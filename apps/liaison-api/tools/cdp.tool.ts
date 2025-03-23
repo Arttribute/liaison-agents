@@ -22,8 +22,14 @@ type TransformClass<T> = {
     : T[K];
 };
 
-export interface CDPTool
-  extends PickDeep<TransformClass<Wallet>, "createTransfer"> {}
+// extends PickDeep<TransformClass<Wallet>, "createTransfer">
+export interface CDPTool {
+  createTransfer(args: {
+    amount: number;
+    assetId: string;
+    destination: string;
+  }): Promise<any>;
+}
 
 // Function to apply overrides only for missing methods
 export function applyDefaults<T extends object>(
