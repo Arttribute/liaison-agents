@@ -22,6 +22,7 @@ export default function LiaisonForm() {
     name: "",
     owner: userAddress,
     network: "base", // Default network
+    isLiaison: "true",
   });
 
   interface ResultType {
@@ -47,6 +48,7 @@ export default function LiaisonForm() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
+    console.log("Creating agent:", agentData);
 
     try {
       const res = await fetch("/api/liaisons", {
@@ -185,9 +187,7 @@ export default function LiaisonForm() {
             </h2>
           </div>
           {/* Agent ID */}
-          {result?.liaisonKey.slice(0, 14) +
-            "...." +
-            result?.liaisonKey.slice(-14)}
+          <p className="text-sm font-semibold">{"Liaison key"}</p>
           <div className="flex justify-between items-center bg-gray-100 px-4 p-1 rounded">
             <p className="text-sm">
               {result.liaisonKey.slice(0, 14) +

@@ -1,138 +1,65 @@
 "use client";
-
-import { useState } from "react";
-import { LogItem } from "@/components/logs/log-item";
-import { LogDetails } from "@/components/logs/log-details";
-import { cn } from "@/lib/utils";
+import { useEffect, useState } from "react";
+import { supabase } from "@/lib/supabase-client";
+import { LogItem } from "./log-item";
+import { LogDetails } from "./log-details";
 import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
 import { Search } from "lucide-react";
+import { cn } from "@/lib/utils";
 
-// Update the sample logs to include tool status and summary
-const sampleLogs = [
-  {
-    id: "log-1",
-    action: "Fetch user data from database",
-    status: "success",
-    message: "Successfully retrieved user data",
-    timestamp: new Date(Date.now() - 1000 * 60 * 5).toISOString(),
-    responseTime: 245,
-    agent: "Database Agent",
-    sessionId: "sess_a1b2c3d4",
-    tools: [
-      {
-        name: "database_query",
-        status: "success",
-        summary: "Retrieved user profile data from database",
-        duration: 198,
-      },
-    ],
-  },
-  {
-    id: "log-2",
-    action: "Process payment transaction",
-    status: "error",
-    message: "Payment gateway timeout",
-    timestamp: new Date(Date.now() - 1000 * 60 * 15).toISOString(),
-    responseTime: 5023,
-    agent: "Payment Agent",
-    sessionId: "sess_e5f6g7h8",
-    tools: [
-      {
-        name: "payment_gateway",
-        status: "error",
-        summary: "Connection to payment processor timed out after 5 seconds",
-        duration: 5000,
-      },
-      {
-        name: "notification_service",
-        status: "success",
-        summary: "Error notification sent to system administrator",
-        duration: 23,
-      },
-    ],
-  },
-  {
-    id: "log-3",
-    action: "Generate weekly report",
-    status: "warning",
-    message: "Report generated with incomplete data",
-    timestamp: new Date(Date.now() - 1000 * 60 * 30).toISOString(),
-    responseTime: 1872,
-    agent: "Reporting Agent",
-    sessionId: "sess_i9j0k1l2",
-    tools: [
-      {
-        name: "data_aggregator",
-        status: "warning",
-        summary: "Missing data from European sales region",
-        duration: 1250,
-      },
-      {
-        name: "pdf_generator",
-        status: "success",
-        summary: "PDF report generated with available data",
-        duration: 622,
-      },
-    ],
-  },
-  {
-    id: "log-4",
-    action: "Send notification to users",
-    status: "success",
-    message: "Notifications sent to all users",
-    timestamp: new Date(Date.now() - 1000 * 60 * 45).toISOString(),
-    responseTime: 532,
-    agent: "Notification Agent",
-    sessionId: "sess_m3n4o5p6",
-    tools: [
-      {
-        name: "user_service",
-        status: "success",
-        summary: "Retrieved 1253 user contacts",
-        duration: 125,
-      },
-      {
-        name: "notification_service",
-        status: "success",
-        summary: "Sent 1250 emails, 3 failed due to invalid addresses",
-        duration: 407,
-      },
-    ],
-  },
-  {
-    id: "log-5",
-    action: "Update product inventory",
-    status: "success",
-    message: "Inventory updated successfully",
-    timestamp: new Date(Date.now() - 1000 * 60 * 60).toISOString(),
-    responseTime: 189,
-    agent: "Inventory Agent",
-    sessionId: "sess_q7r8s9t0",
-    tools: [
-      {
-        name: "inventory_service",
-        status: "success",
-        summary: "Updated stock levels for 2 products",
-        duration: 189,
-      },
-    ],
-  },
-];
+export type AgentLog = {
+  timestamp: string | number | Date;
+  log_id: string;
+  agent_id: string;
+  action?: string;
+  status?: string;
+  message?: string;
+  created_at: string;
+  response_time?: number;
+  session_id?: string;
+  tools?: Array<{
+    name: string;
+    status: string;
+    summary?: string;
+    duration?: number;
+  }>;
+};
 
-export type LogType = (typeof sampleLogs)[number];
+interface LogsDisplayProps {
+  agentId: string;
+}
 
-export function LogsDisplay() {
-  const [selectedLog, setSelectedLog] = useState<LogType | null>(null);
+export function LogsDisplay({ agentId }: LogsDisplayProps) {
+  const [logs, setLogs] = useState<AgentLog[]>([]);
+  const [selectedLog, setSelectedLog] = useState<AgentLog | null>(null);
   const [searchTerm, setSearchTerm] = useState("");
 
-  const filteredLogs = sampleLogs.filter(
-    (log) =>
-      log.action.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      log.message.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      log.agent.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      log.sessionId.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  useEffect(() => {
+    async function fetchLogs() {
+      if (!agentId) return;
+      const { data, error } = await supabase
+        .from("agent_log")
+        .select("*")
+        .eq("agent_id", agentId)
+        .order("created_at", { ascending: false });
+
+      if (error) {
+        console.error("Error fetching logs:", error);
+        return;
+      }
+      if (data) {
+        setLogs(data as AgentLog[]);
+      }
+    }
+    fetchLogs();
+  }, [agentId]);
+
+  const filteredLogs = logs.filter((log) => {
+    const text = `${log.action ?? ""} ${log.message ?? ""} ${
+      log.session_id ?? ""
+    }`.toLowerCase();
+    return text.includes(searchTerm.toLowerCase());
+  });
 
   return (
     <div className="flex flex-col md:flex-row gap-4 h-[calc(100vh-120px)]">
@@ -152,26 +79,21 @@ export function LogsDisplay() {
               onChange={(e) => setSearchTerm(e.target.value)}
             />
           </div>
-          <div className="flex justify-between items-center mt-4 text-sm font-medium text-muted-foreground">
-            <div className="w-2/5">Action</div>
-            <div className="w-1/5">Session ID</div>
-            <div className="w-1/5">Status</div>
-            <div className="w-1/5">Time</div>
-          </div>
+          {/* headings, etc. */}
         </div>
         <div className="overflow-y-auto max-h-[calc(100vh-220px)]">
           {filteredLogs.length > 0 ? (
             filteredLogs.map((log) => (
               <LogItem
-                key={log.id}
+                key={log.log_id}
                 log={log}
-                isSelected={selectedLog?.id === log.id}
+                isSelected={selectedLog?.log_id === log.log_id}
                 onClick={() => setSelectedLog(log)}
               />
             ))
           ) : (
             <div className="p-8 text-center text-muted-foreground">
-              No logs found matching your search criteria
+              No logs found
             </div>
           )}
         </div>
@@ -180,14 +102,7 @@ export function LogsDisplay() {
       {selectedLog && (
         <div className="md:w-1/3 border rounded-lg shadow-sm overflow-hidden">
           <div className="border-b bg-muted/30 flex justify-between items-center">
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => setSelectedLog(null)}
-              className="px-2"
-            >
-              Close
-            </Button>
+            {/* details or a close button */}
           </div>
           <div className="overflow-y-auto max-h-[calc(100vh-220px)]">
             <LogDetails log={selectedLog} />

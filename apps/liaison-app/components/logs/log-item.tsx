@@ -1,12 +1,12 @@
 "use client";
 
 import { cn } from "@/lib/utils";
-import type { LogType } from "@/components/logs/logs-display";
+import type { AgentLog } from "@/components/logs/logs-display";
 import { formatDistanceToNow } from "date-fns";
 import { AlertCircle, CheckCircle, Clock } from "lucide-react";
 
 interface LogItemProps {
-  log: LogType;
+  log: AgentLog;
   isSelected: boolean;
   onClick: () => void;
 }
@@ -53,20 +53,20 @@ export function LogItem({ log, isSelected, onClick }: LogItemProps) {
           {log.message}
         </div>
       </div>
-      <div className="w-1/5 text-sm font-mono">{log.sessionId}</div>
+      <div className="w-1/5 text-sm font-mono">{log.session_id}</div>
       <div className="w-1/5 flex items-center gap-1.5">
-        {getStatusIcon(log.status)}
+        {getStatusIcon(log.status || "")}
         <span
           className={cn(
             "capitalize text-sm font-medium",
-            getStatusText(log.status)
+            getStatusText(log.status || "")
           )}
         >
           {log.status}
         </span>
       </div>
       <div className="w-1/5 text-sm text-muted-foreground">
-        {formatDistanceToNow(new Date(log.timestamp), { addSuffix: true })}
+        {formatDistanceToNow(new Date(log.created_at), { addSuffix: true })}
       </div>
     </div>
   );

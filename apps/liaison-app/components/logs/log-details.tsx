@@ -1,10 +1,10 @@
-import type { LogType } from "@/components/logs/logs-display";
+import type { AgentLog } from "@/components/logs/logs-display";
 import { formatDistanceToNow, format } from "date-fns";
 import { AlertCircle, CheckCircle, Clock, Wrench } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface LogDetailsProps {
-  log: LogType;
+  log: AgentLog;
 }
 
 export function LogDetails({ log }: LogDetailsProps) {
@@ -67,7 +67,7 @@ export function LogDetails({ log }: LogDetailsProps) {
       <div className="flex flex-col">
         <div className="flex justify-between items-start">
           <h3 className="font-medium text-sm">{log.action}</h3>
-          {getStatusBadge(log.status)}
+          {getStatusBadge(log.status ?? "")}
         </div>
         <p className="text-muted-foreground text-xs">{log.message}</p>
       </div>
@@ -75,24 +75,24 @@ export function LogDetails({ log }: LogDetailsProps) {
       <div className="grid grid-cols-2 gap-4">
         <div>
           <div className="text-muted-foreground mb-1 text-sm">Session ID</div>
-          <div className="font-mono font-medium text-xs">{log.sessionId}</div>
+          <div className="font-mono font-medium text-xs">{log.session_id}</div>
         </div>
         <div>
           <div className="text-muted-foreground mb-1 text-sm">Agent</div>
-          <div className="font-medium text-xs">{log.agent}</div>
+          <div className="font-medium text-xs">{log.agent_id}</div>
         </div>
         <div>
           <div className="text-muted-foreground mb-1 text-sm">
             Response Time
           </div>
-          <div className="font-medium text-xs">{log.responseTime}ms</div>
+          <div className="font-medium text-xs">{log.response_time}ms</div>
         </div>
         <div>
           <div className="text-muted-foreground mb-1 text-sm">Timestamp</div>
           <div className="font-medium text-xs">
-            {format(new Date(log.timestamp), "PPpp")}
+            {format(new Date(log.created_at), "PPpp")}
             <div className="text-xs text-muted-foreground">
-              {formatDistanceToNow(new Date(log.timestamp), {
+              {formatDistanceToNow(new Date(log.created_at), {
                 addSuffix: true,
               })}
             </div>

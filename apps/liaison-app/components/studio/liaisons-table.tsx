@@ -1,3 +1,7 @@
+"use client";
+
+import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import {
   Table,
   TableBody,
@@ -7,60 +11,77 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { NetworkBadge } from "@/components/networks/network-badge";
+import { supabase } from "@/lib/supabase-client";
 
-const liaisons = [
-  {
-    name: "Agent 1 ",
-    network: "base",
-    liaisonKey: "lk234...2345",
-    createdAt: "23/12/2024",
-    lastUsed: "23/2/2025",
-  },
-  {
-    name: "Agent 2",
-    network: "ethereum",
-    liaisonKey: "lk234...2345",
-    createdAt: "23/12/2024",
-    lastUsed: "23/2/2025",
-  },
-  {
-    name: "Agent 3",
-    network: "optimism",
-    liaisonKey: "lk234...2345",
-    createdAt: "23/12/2024",
-    lastUsed: "23/2/2025",
-  },
-  {
-    name: "Agent 4",
-    network: "og",
-    liaisonKey: "lk234...2345",
-    createdAt: "23/12/2024",
-    lastUsed: "23/2/2025",
-  },
-  {
-    name: "Agent 5",
-    network: "arbitrum",
-    liaisonKey: "lk234...2345",
-    createdAt: "23/12/2024",
-    lastUsed: "23/2/2025",
-  },
-  {
-    name: "Agent 6",
-    network: "arbitrum",
-    liaisonKey: "lk234...2345",
-    createdAt: "23/12/2024",
-    lastUsed: "23/2/2025",
-  },
-  {
-    name: "Agent 7",
-    network: "ethereum",
-    liaisonKey: "lk234...2345",
-    createdAt: "23/12/2024",
-    lastUsed: "23/2/2025",
-  },
-];
+// Define a TypeScript interface for our Agent records, if desired
+interface Agent {
+  agent_id: string;
+  name: string;
+  network: string | null;
+  liaison_key_display: string | null;
+  created_at: string;
+  // add other fields as needed
+}
 
-export function LiasonsTable() {
+interface LiasonsTableProps {
+  userAddress?: string;
+}
+
+export function LiasonsTable({ userAddress }: LiasonsTableProps) {
+  const router = useRouter();
+  const [liaisons, setLiaisons] = useState<Agent[]>([]);
+  const [loading, setLoading] = useState(false);
+  console.log("userAddress", userAddress);
+
+  useEffect(() => {
+    const fetchLiaisons = async () => {
+      if (!userAddress) return; // If no user address, no need to fetch
+      try {
+        setLoading(true);
+        const { data, error } = await supabase
+          .from("agent")
+          .select("*")
+          .eq("is_liaison", true)
+          .eq("owner", userAddress);
+
+        setLoading(false);
+        if (data) {
+          // Adjust field names if your DB columns differ
+          setLiaisons(data as Agent[]);
+        }
+        if (error) {
+          console.error("Error fetching agents:", error);
+        }
+      } catch (error) {
+        console.error("Error fetching agents:", error);
+      }
+    };
+
+    fetchLiaisons();
+  }, [userAddress]);
+
+  const handleClick = (agentId: string) => {
+    router.push(`/studio/agents/${agentId}`);
+  };
+
+  if (!userAddress) {
+    return (
+      <div>
+        <p className="text-sm text-muted-foreground">
+          Connect your wallet to see your liaison agents.
+        </p>
+      </div>
+    );
+  }
+
+  if (loading) {
+    return <div>Loading your liaison agents...</div>;
+  }
+
+  if (liaisons.length === 0) {
+    return <div>No liaison agents found for this wallet.</div>;
+  }
+
   return (
     <Table>
       <TableHeader>
@@ -74,14 +95,26 @@ export function LiasonsTable() {
       </TableHeader>
       <TableBody>
         {liaisons.map((liaison) => (
-          <TableRow key={liaison.name}>
+          <TableRow
+            key={liaison.agent_id}
+            onClick={() => handleClick(liaison.agent_id)}
+            className="cursor-pointer"
+          >
             <TableCell className="font-medium">{liaison.name}</TableCell>
             <TableCell>
-              <NetworkBadge value={liaison.network} />
+              {liaison.network ? (
+                <NetworkBadge value={liaison.network} />
+              ) : (
+                "N/A"
+              )}
             </TableCell>
-            <TableCell>{liaison.liaisonKey}</TableCell>
-            <TableCell className="">{liaison.createdAt}</TableCell>
-            <TableCell className="">{liaison.lastUsed}</TableCell>
+            <TableCell>{liaison.liaison_key_display || "—"}</TableCell>
+            <TableCell className="">
+              {new Date(liaison.created_at).toLocaleDateString()}
+            </TableCell>
+            <TableCell className="">
+              {"—" /* If you have a "last used" field, display it */}
+            </TableCell>
           </TableRow>
         ))}
       </TableBody>

@@ -1,47 +1,36 @@
 import { NextResponse } from "next/server";
 
-//const baseUrl = process.env.NEXT_PUBLIC_NEST_API_BASE_URL;
+const baseUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001";
 
-/**
- * POST /api/liaison
- * Creates a liaison  agent
- */
-//export async function POST(request: Request) {
-export async function POST() {
+export async function GET() {
   try {
-    // const body = await request.json();
-    // const res = await fetch(`${baseUrl}/v1/liaison`, {
-    //   method: "POST",
-    //   headers: { "Content-Type": "application/json" },
-    //   body: JSON.stringify(body),
-    // });
+    const res = await fetch(`${baseUrl}/v1/agents`, { method: "GET" });
+    if (!res.ok) {
+      const err = await res.json();
+      return NextResponse.json(err, { status: res.status });
+    }
+    const data = await res.json();
+    return NextResponse.json(data, { status: 200 });
+  } catch (error) {
+    return NextResponse.json({ error: String(error) }, { status: 500 });
+  }
+}
 
-    // if (!res.ok) {
-    //   const errData = await res.json();
-    //   return NextResponse.json(errData, { status: res.status });
-    // }
-
-    // const data = await res.json();
-    // return NextResponse.json(data, { status: res.status });
-
-    // Mock response
-    const data = {
-      agentId: "0x12345678909990998009809809u",
-      name: "Liaison Agent",
-      liaisonKey: "12345678901234567891234567891234567892345678901234567893",
-      description:
-        "A liaison agent that performs onchain actions on behalf of agents",
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
-    };
+export async function POST(request: Request) {
+  try {
+    const body = await request.json();
+    const res = await fetch(`${baseUrl}/v1/agents`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(body),
+    });
+    if (!res.ok) {
+      const err = await res.json();
+      return NextResponse.json(err, { status: res.status });
+    }
+    const data = await res.json();
     return NextResponse.json(data, { status: 201 });
   } catch (error) {
-    if (error instanceof Error) {
-      console.error("Error creating liaison agent:", error.message);
-      return NextResponse.json({ error: error.message }, { status: 500 });
-    } else {
-      console.error("Error creating liaison agent:", error);
-      return NextResponse.json({ error: "Unknown error" }, { status: 500 });
-    }
+    return NextResponse.json({ error: String(error) }, { status: 500 });
   }
 }

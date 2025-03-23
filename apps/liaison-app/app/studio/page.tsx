@@ -1,10 +1,13 @@
+"use client";
 import AppBar from "@/components/layout/app-bar";
-import { LogsDisplay } from "@/components/logs/logs-display";
-import { UsageStatistics } from "@/components/stats/usage-statistics";
 import { LiasonsTable } from "@/components/studio/liaisons-table";
 import { SidebarNav } from "@/components/studio/sidebar-nav";
+import { useAuth } from "@/context/auth-context";
 
-export default function Home() {
+export default function Studio() {
+  const { authState } = useAuth();
+  const { walletAddress } = authState;
+  const userAddress = walletAddress?.toLowerCase();
   return (
     <div>
       <AppBar />
@@ -12,9 +15,7 @@ export default function Home() {
         <SidebarNav />
 
         <div className="flex flex-col m-4 w-full">
-          <LiasonsTable />
-          <LogsDisplay />
-          <UsageStatistics />
+          <LiasonsTable userAddress={userAddress} />
         </div>
       </div>
     </div>
