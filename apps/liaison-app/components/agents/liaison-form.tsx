@@ -17,13 +17,15 @@ export default function LiaisonForm() {
   const { authState } = useAuth();
   const { walletAddress } = authState;
   const userAddress = walletAddress?.toLowerCase();
+  console.log("User Address:", userAddress);
   // State for the agent form
   const [agentData, setAgentData] = useState({
     name: "",
-    owner: userAddress,
+    owner: walletAddress?.toLowerCase(),
     network: "base", // Default network
     isLiaison: "true",
   });
+  console.log("Initial Agent Data:", agentData);
 
   interface ResultType {
     liaisonKey: string;
