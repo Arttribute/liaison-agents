@@ -163,7 +163,7 @@ export async function runAgent(c: Context) {
       ({
         type: "function",
         function: _,
-        endpoint: `http://localhost:${process.env.PORT}/v1/agents/tools`,
+        endpoint: `http://localhost:${process.env.PORT}/v1/agents/${agentId}/tools`,
       } as unknown as ChatCompletionTool & { endpoint: string })
   );
 
@@ -259,7 +259,6 @@ export async function runAgent(c: Context) {
     if (!toolCalls?.length) {
       done = true; // if no tool calls => final
     }
-    console.log(chatGPTResponse.choices[0].message);
   } while (!done && chatGPTResponse.choices[0].message.tool_calls?.length);
 
   // parse "###ACTION_SUMMARY: " from finalAIContent
