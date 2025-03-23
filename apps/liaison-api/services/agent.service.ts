@@ -121,10 +121,10 @@ export class AgentService {
     await publicClient.waitForTransactionReceipt({ hash: txHash });
   }
 
-  public async checkCommonsBalance(agentId: string) {
+  public async checkTokenBalance(agentId: string, contractAddress: string) {
     const row = await this.getAgent(agentId);
     const wallet = await Wallet.import(row.wallet);
-    const balance = await wallet.getBalance(COMMON_TOKEN_ADDRESS);
+    const balance = await wallet.getBalance(contractAddress);
     return balance.toNumber();
   }
 }

@@ -4,6 +4,7 @@ import { getChainByName } from "../lib/chains.js";
 import { publicClient } from "../services/coinbase.service.js";
 import { SolcService } from "../services/solc.service.js";
 import { fetchAbiFromExplorer } from "../services/etherscan.service.js";
+import { AgentService } from "../services/agent.service.js";
 
 export interface ContractTool {
   callContract(
@@ -66,6 +67,13 @@ export interface ContractTool {
     }
     // _metadata: any
   ): Promise<{ abi: any }>;
+
+  getBalance(
+    args: {
+      agentId: string;
+    }
+    //_metadata: any
+  ): Promise<{ balance: number }>;
 }
 
 export class ContractToolEngine implements ContractTool {
@@ -218,22 +226,17 @@ export class ContractToolEngine implements ContractTool {
       "Must provide either (contractAddress + useExplorer) or (sourceCode) to get ABI."
     );
   }
-  //get balance
-  public async getBalance(
-    args: {
-      privateKey: string;
-    },
-    _metadata: any
-  ): Promise<{ balance: string }> {
-    const chain = getChainByName(this.network);
-    const walletClient = createWalletClient({
-      account: privateKeyToAccount(`0x${args.privateKey}` as `0x${string}`),
-      chain,
-      transport: http(),
-    });
-    const balance = await publicClient.getBalance({
-      address: walletClient.account.address,
-    });
-    return { balance: balance.toString() };
+
+  //check balance using checkTokenBalance method from agent service
+  public async getBalance(args: {
+    agentId: string;
+    contractAddress: string;
+  }): Promise<{ balance: number }> {
+    const agentService = new AgentService();
+    const balance = await agentService.checkTokenBalance(
+      args.agentId,
+      "0x09d3e33fBeB985653bFE868eb5a62435fFA04e4F"
+    );
+    return { balance };
   }
 }
