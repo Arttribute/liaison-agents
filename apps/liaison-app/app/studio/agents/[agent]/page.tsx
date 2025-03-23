@@ -17,7 +17,7 @@ export default function AgentStudio() {
   const { walletAddress } = authState;
   const userAddress = walletAddress?.toLowerCase();
 
-  const [agent, setAgent] = useState<any>(null);
+  const [agent, setAgent] = useState(null);
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
