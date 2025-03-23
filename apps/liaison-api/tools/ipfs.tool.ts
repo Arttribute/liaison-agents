@@ -1,15 +1,29 @@
-// ipfs.tools.ts
-import { PinataService } from "#/services/pinata.service";
+import { PinataService } from "../services/pinata.service.js";
 
-export class IpfsTool {
-  async uploadFileToIPFS(props: {
-    base64String: string;
-    fileName: string;
-    mimeType: string;
-    agentId?: string;
-  }): Promise<{ ipfsUrl: string }> {
+export interface IpfsTool {
+  uploadFileToIPFS(
+    args: {
+      base64String: string;
+      fileName: string;
+      mimeType: string;
+      agentId?: string;
+    },
+    _metadata: any
+  ): Promise<{ ipfsUrl: string }>;
+}
+
+export class IpfsToolEngine implements IpfsTool {
+  async uploadFileToIPFS(
+    args: {
+      base64String: string;
+      fileName: string;
+      mimeType: string;
+      agentId?: string;
+    },
+    _metadata: any
+  ): Promise<{ ipfsUrl: string }> {
     try {
-      const { base64String, fileName, mimeType } = props;
+      const { base64String, fileName, mimeType } = args;
 
       // 1) Upload to Pinata
       const pinataResult = await new PinataService().uploadFileFromBase64(

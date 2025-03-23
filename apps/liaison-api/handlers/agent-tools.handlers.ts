@@ -1,6 +1,8 @@
 import { agentService } from "../services/agent.service.js";
 import { applyDefaults, CDPToolEngine } from "../tools/cdp.tool.js";
 import { GraphQLToolEngine } from "../tools/graphql.tool.js";
+import { ContractToolEngine } from "../tools/contract.tool.js"; // Updated import
+import { IpfsToolEngine } from "../tools/ipfs.tool.js"; // Updated import
 import { Wallet } from "@coinbase/coinbase-sdk";
 import type { Context } from "hono";
 import { HTTPException } from "hono/http-exception";
@@ -30,16 +32,22 @@ export async function makeAgentToolCall(c: Context) {
   console.log("Tool Call", { toolCall, toolCallArgs: args });
 
   const toolWithMethod = [
-    applyDefaults(new CDPToolEngine(wallet), wallet),
+    new ContractToolEngine(agent.network ?? ""),
+    new IpfsToolEngine(),
     new GraphQLToolEngine(),
+    applyDefaults(new CDPToolEngine(wallet), wallet),
     // this.commonToolService,
     // this.ethereumToolService,
     // @ts-expect-error
   ].find((tool) => tool[toolCall.function.name]);
 
-  // console.log('Tool with method', toolWithMethod);
+  if (!toolWithMethod) {
+    throw new HTTPException(400, {
+      message: `No matching tool found for method: ${toolCall.function.name}`,
+    });
+  }
 
-  // @ts-expect-error
+  // @ts-expect-error - dynamic method call
   const data = await toolWithMethod[toolCall.function.name](args, metadata);
 
   return data;
