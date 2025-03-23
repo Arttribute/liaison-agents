@@ -218,4 +218,22 @@ export class ContractToolEngine implements ContractTool {
       "Must provide either (contractAddress + useExplorer) or (sourceCode) to get ABI."
     );
   }
+  //get balance
+  public async getBalance(
+    args: {
+      privateKey: string;
+    },
+    _metadata: any
+  ): Promise<{ balance: string }> {
+    const chain = getChainByName(this.network);
+    const walletClient = createWalletClient({
+      account: privateKeyToAccount(`0x${args.privateKey}` as `0x${string}`),
+      chain,
+      transport: http(),
+    });
+    const balance = await publicClient.getBalance({
+      address: walletClient.account.address,
+    });
+    return { balance: balance.toString() };
+  }
 }

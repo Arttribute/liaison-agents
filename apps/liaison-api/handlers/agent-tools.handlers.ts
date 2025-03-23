@@ -26,6 +26,7 @@ export async function makeAgentToolCall(c: Context) {
   }
 
   const privateKey = agentService.seedToPrivateKey(agent.wallet.seed);
+
   const wallet = await Wallet.import(agent.wallet);
   merge(metadata, { privateKey });
 
@@ -50,5 +51,5 @@ export async function makeAgentToolCall(c: Context) {
   // @ts-expect-error - dynamic method call
   const data = await toolWithMethod[toolCall.function.name](args, metadata);
 
-  return data;
+  return c.json(data);
 }
